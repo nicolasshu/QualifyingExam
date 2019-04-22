@@ -1,0 +1,94 @@
+\documentclass[onecolumn]{article}
+
+\def\arcdeg{\hbox{$^\circ$}}
+\def\arcmin{\hbox{$^\prime$}}
+\def\arcsec{\hbox{$^{\prime\prime}$}}
+\def\farcs{\hbox{$.\!\!^{\prime\prime}$}}
+\def\farcm{\hbox{$.\!\!^{\prime}$}}
+\def\itfarcs{\hbox{{\it $.\!\!^{\prime\prime}$}}}
+\def\arcpt{${{\lower3pt\hbox{$^{\prime\prime}$}}\atop{\raise4pt\hbox{.}}}$}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% PACKAGES TO BE USED
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage{graphicx}
+\usepackage{color}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{minted}
+\usepackage[letterpaper, margin=0.75in]{geometry}
+\usepackage{tikz}
+\usepackage{soul}
+\usepackage{dirtree}
+\usetikzlibrary{shapes.geometric, arrows}
+
+%\usepackage{enumitem,amssymb}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% For Footer
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage[english]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage{fancyhdr}
+\usepackage{minibox}
+\usepackage{framed}
+\usepackage[most]{tcolorbox}
+\usepackage{bm}
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[R]{\textbf{Advisor: Gari Clifford}}
+\fancyhead[L]{\textbf{Nick Shu's Lab Notebook}}
+\fancyfoot[L]{\textbf{Georgia Institute of Technology}}
+\fancyfoot[R]{\textbf{\thepage}}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% For Multiple Columns within Text
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage{multicol}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% NEW COMMANDS
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newcommand\tab[1][1cm]{\hspace*{#1}}
+\newcommand*{\code}[1]{\tikz[baseline=(X.base)] \node[fill=lightgray] (X) {\texttt{#1}};}
+\newcommand{\vv}{\overrightarrow}
+\newcommand{\bs}{\textbackslash}
+\newtcolorbox{codebox}{
+    breakable,
+    colback=blue!5!white,
+    colframe=blue!75!black,
+    %fonttitle=\bfseries,
+    %title=#1,
+    breakable}
+\newtcolorbox{emailbox}{breakable,colback=red!5!white,colframe=red!75!black}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% For Links to Websites
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% https://www.sharelatex.com/learn/Hyperlinks
+\usepackage{hyperref}
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    filecolor=magenta,
+    urlcolor=cyan,
+}
+
+\urlstyle{same}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{document}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%Title Page
+\include{./title}
+
+\include{speech}
+\include{dl_theory}
+
+\newpage
+\href{run:./file.txt}{File.txt}
+
+\end{document}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
