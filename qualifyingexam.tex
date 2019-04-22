@@ -23,8 +23,6 @@
 \usepackage{dirtree}
 \usetikzlibrary{shapes.geometric, arrows}
 
-%\usepackage{enumitem,amssymb}
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % For Footer
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -39,7 +37,7 @@
 \pagestyle{fancy}
 \fancyhf{}
 \fancyhead[R]{\textbf{Advisor: Gari Clifford}}
-\fancyhead[L]{\textbf{Nick Shu's Lab Notebook}}
+\fancyhead[L]{\textbf{Nicolas Shu's Qualifying Exam}}
 \fancyfoot[L]{\textbf{Georgia Institute of Technology}}
 \fancyfoot[R]{\textbf{\thepage}}
 
@@ -48,7 +46,7 @@
 % For Multiple Columns within Text
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \usepackage{multicol}
-
+\usepackage[nottoc]{tocbibind}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % NEW COMMANDS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -60,8 +58,6 @@
     breakable,
     colback=blue!5!white,
     colframe=blue!75!black,
-    %fonttitle=\bfseries,
-    %title=#1,
     breakable}
 \newtcolorbox{emailbox}{breakable,colback=red!5!white,colframe=red!75!black}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -78,17 +74,22 @@
 
 \urlstyle{same}
 
+\bibliographystyle{apalike}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{document}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %Title Page
 \include{./title}
-
+\tableofcontents
 \include{speech}
 \include{dl_theory}
 
-\newpage
-\href{run:./file.txt}{File.txt}
+% \newpage
+% \href{run:./file.txt}{File.txt}
+% \section{First Section}
+% This document is an example of BibTeX using in bibliography management. Three items are cited: \textit{The \LaTeX\ Companion} book \cite{latexcompanion}, the Einstein journal paper \cite{einstein}, and the Donald Knuth's website \cite{knuthwebsite}. The \LaTeX\ related items are \cite{latexcompanion,knuthwebsite}.
+
+\bibliography{bibliography}
 
 \end{document}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
