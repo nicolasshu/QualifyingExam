@@ -3,8 +3,20 @@
 \contentsline {section}{\numberline {2}Preliminary Data}{3}{section.2}
 \contentsline {subsection}{\numberline {2.1}Comparison of Different Commercial Engines}{3}{subsection.2.1}
 \contentsline {subsection}{\numberline {2.2}Grade Reading Level of Various Texts}{3}{subsection.2.2}
-\contentsline {section}{\numberline {3}Deep Relaxation: PDEs for Optimizing Deep Neural Networks}{4}{section.3}
-\contentsline {section}{\numberline {4}Characterization of Neural Networks as a Encoder-Decoder with Mutual Information}{4}{section.4}
-\contentsline {section}{\numberline {5}The Stochastic Thermodynamics of Learning}{4}{section.5}
-\contentsline {section}{\numberline {6}Casting Residual Networks as a Mean-Field Optimal Control Problem}{4}{section.6}
-\contentsline {section}{References}{5}{section*.2}
+\contentsline {section}{\numberline {3}Automatic Speech Recognition Schematic for a Medical Setting}{3}{section.3}
+\contentsline {section}{\numberline {4}Speech Enhancement}{4}{section.4}
+\contentsline {subsection}{\numberline {4.1}Convolutional Neural Networks for Noise Suppression}{4}{subsection.4.1}
+\contentsline {subsection}{\numberline {4.2}Non-Negative Matrix Factorization}{4}{subsection.4.2}
+\contentsline {section}{\numberline {5}Blind Source Separation}{4}{section.5}
+\contentsline {subsection}{\numberline {5.1}Independent Component Analysis}{4}{subsection.5.1}
+\contentsline {subsection}{\numberline {5.2}Non-Negative Matrix Factorization (NMF) and Sparse NMF}{4}{subsection.5.2}
+\contentsline {section}{\numberline {6}Speaker Diarisation}{4}{section.6}
+\contentsline {section}{\numberline {7}Speaker Verification}{4}{section.7}
+\contentsline {section}{\numberline {8}Speech Recognition}{4}{section.8}
+\contentsline {subsection}{\numberline {8.1}Hidden-Markov Models and Gaussian Mixture Models}{4}{subsection.8.1}
+\contentsline {subsection}{\numberline {8.2}Long Short Term Memory Networks}{4}{subsection.8.2}
+\contentsline {section}{\numberline {9}Deep Relaxation: PDEs for Optimizing Deep Neural Networks}{5}{section.9}
+\contentsline {section}{\numberline {10}Characterization of Neural Networks as a Encoder-Decoder with Mutual Information}{5}{section.10}
+\contentsline {section}{\numberline {11}The Stochastic Thermodynamics of Learning}{5}{section.11}
+\contentsline {section}{\numberline {12}Casting Residual Networks as a Mean-Field Optimal Control Problem}{5}{section.12}
+\contentsline {section}{References}{6}{section*.2}

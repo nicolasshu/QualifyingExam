@@ -29,3 +29,30 @@ MIMIC II + 20kLeagues
 
 \subsection{Grade Reading Level of Various Texts}
 MIMIC II + 20kLeagues
+
+
+\section{Automatic Speech Recognition Schematic for a Medical Setting}
+
+In order to have a speech recognition system to be able to understand medical language, it is important to obtain a big picture of the project.
+
+
+[INSERT FIGURE]
+
+
+\textcolor{red}{\textit{As one can see from the diagram above, the sound signals would come to a microphone or an array of microphones, which would then be passed through a system that performs blind source separation on the sound signal. It is very possible that, in a hospital environment, there may be multiple sources, such as the heart rate monitor, the ventilator, the healthcare providers talking, and others. A blind source separation algorithm would ensure to separate the audio channel to multiple sources. Once the sources have been separated, there would be a classification methodology to identify the physician from the patient, and ...}}
+
+Although there have been many advancements in the speech technologies and there currently exists very accurate engines to do voice recognition, it still remains to be an unsolved problem, as there is always room for improvement. Therefore, there are a lot of possibilities for the formulation design of the framework (i.e. pipeline).
+
+\section{Speech Enhancement}
+\subsection{Convolutional Neural Networks for Noise Suppression}
+\subsection{Non-Negative Matrix Factorization}
+Please skip to the Blind Source Separation's subsection on \hyperref[sec:NMF]{Non-Negative Matrix Factorization}
+\section{Blind Source Separation}
+\subsection{Independent Component Analysis}
+\subsection{Non-Negative Matrix Factorization (NMF) and Sparse NMF} \label{sec:NMF}
+
+\section{Speaker Diarisation}
+\section{Speaker Verification}
+\section{Speech Recognition}
+\subsection{Hidden-Markov Models and Gaussian Mixture Models}
+\subsection{Long Short Term Memory Networks}
