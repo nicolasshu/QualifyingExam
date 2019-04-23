@@ -1,9 +1,10 @@
 \babel@toc {english}{}
 \contentsline {section}{\numberline {1}Background}{3}{section.1}
-\contentsline {section}{\numberline {2}Prior Work}{3}{section.2}
-\contentsline {section}{\numberline {3}Preliminary Data}{3}{section.3}
-\contentsline {section}{\numberline {4}Deep Relaxation: PDEs for Optimizing Deep Neural Networks}{4}{section.4}
-\contentsline {section}{\numberline {5}Characterization of Neural Networks as a Encoder-Decoder with Mutual Information}{4}{section.5}
-\contentsline {section}{\numberline {6}The Stochastic Thermodynamics of Learning}{4}{section.6}
-\contentsline {section}{\numberline {7}Casting Residual Networks as a Mean-Field Optimal Control Problem}{4}{section.7}
+\contentsline {section}{\numberline {2}Preliminary Data}{3}{section.2}
+\contentsline {subsection}{\numberline {2.1}Comparison of Different Commercial Engines}{3}{subsection.2.1}
+\contentsline {subsection}{\numberline {2.2}Grade Reading Level of Various Texts}{3}{subsection.2.2}
+\contentsline {section}{\numberline {3}Deep Relaxation: PDEs for Optimizing Deep Neural Networks}{4}{section.3}
+\contentsline {section}{\numberline {4}Characterization of Neural Networks as a Encoder-Decoder with Mutual Information}{4}{section.4}
+\contentsline {section}{\numberline {5}The Stochastic Thermodynamics of Learning}{4}{section.5}
+\contentsline {section}{\numberline {6}Casting Residual Networks as a Mean-Field Optimal Control Problem}{4}{section.6}
 \contentsline {section}{References}{5}{section*.2}

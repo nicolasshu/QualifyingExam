@@ -10,6 +10,17 @@ Chaudhari, P., Oberman, A., Osher, S., Soatto, S., and Carlier, G. (2018).
 E, W., Han, J., and Li, Q. (2018).
 \newblock A mean-field optimal control formulation of deep learning.
 
+\bibitem[Fowler, 2018]{asr_at_home}
+Fowler, G. (2018).
+\newblock I live with alexa, google assistant and siri. here's which one you
+  should pick.
+\newblock {\em The Washington Post: The Switch Review}.
+
+\bibitem[Moskvitch, 2017]{voicerecog_history}
+Moskvitch, K. (2017).
+\newblock The machines that learned to listen.
+\newblock {\em BBC Future}.
+
 \bibitem[Shwartz-Ziv and Tishby, 2017]{blackbox}
 Shwartz-Ziv, R. and Tishby, N. (2017).
 \newblock Opening the black box of deep neural networks via information.

@@ -1,8 +1,31 @@
 % \begin{center} \huge{Speech} \end{center}
+% \section{Background}
+% \section{Prior Work}
+% \section{Preliminary Data}
+
+
 \section{Background}
 
+Automatic speech recognition (ASR) has been a topic that interested many from an early age. Many consider it to have started in the 1950s with Bell Labs' \textit{Audrey} \cite{voicerecog_history}, which was able to do a single-speaker digit recognition. Seventy years later, the ASR technologies have grown so that they are present within our personal homes, with Amazon Alexa and Google Home devices \cite{asr_at_home}, as they have become more affordable. As the speech technologies advance, they approach the concept of ubiquitous computing (often also known as ambient intelligence), which is highly desirable for many industries. Although most of the ASR systems available for commerce are trained in normal language and not medical language, one industry that could greatly benefit from ASR technologies is the health care system, given that the ASR system is able to understand medical language.
 
-\section{Prior Work}
+Health care is a system which has a very high demand and the services are required to be as detailed as possible due to various reasons, one of which is the concept that it is paramount for a hospital to have a clear and rich track of a patient's medical history. Currently, in order to maintain a patient's medical history, a physician sees multiple people during his/her working hours, and only after their shift is over, does (s)he sit down to write the medical notes. The lag in between seeing a patient and taking notes may sometimes go up to 8-10 hours, and then those notes are often inaccurate. Having an ASR system in a medical environment could greatly help in keeping track of a patient's medical history, where a physician could easily dictate the notes. In a hospital environment, however, such as in an intensive care unit (ICU), a physician who is trying to dictate notes may find him or herself in trouble, as in the ICU, there are multiple background sounds from machines, multiple people speaking, and a great amount of white noise.
 
+Current companies have been creating ASR systems that can understand medical language and allows physicians to dictate their medical notes. One major company that has been "dominating" a lot of the market is Nuance, with their Dragon Medical system. Unfortunately, their dictation system is not yet capable of inferring punctuation marks and markup language onto the text, thus, in order to dictate a segment such as: "37-year-old female presents complainint of urinary frequency, urgency and dysuria along with hematuria and low-grade fever." needs to be dictated as:
+
+\begin{center}
+    "37-year-old female presents complainint of urinary frequency \textbf{comma} urgency and dysuria along with hematuria and low-grade fever \textbf{period}"
+\end{center}
+
+Although the system has very high accuracy results, the system works best when one is in a quiet environment, which is not always a realistic scenario. The goal of this project is to create a transcription engine that can recognize medical language in a noisy environment.
 
 \section{Preliminary Data}
+
+\subsection{Comparison of Different Commercial Engines}
+
+Compare commercial ( + CMU)
+Text->Voice-> Text
+MIMIC II + 20kLeagues
+
+
+\subsection{Grade Reading Level of Various Texts}
+MIMIC II + 20kLeagues
