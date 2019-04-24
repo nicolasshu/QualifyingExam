@@ -1,57 +1,9 @@
-This is BibTeX, Version 0.99d (TeX Live 2017/Debian)
-Capacity: max_strings=100000, hash_size=100000, hash_prime=85009
-The top-level auxiliary file: qualifyingexam.aux
+This is BibTeX, Version 0.99dThe top-level auxiliary file: qualifyingexam.aux
 The style file: apalike.bst
-A level-1 auxiliary file: ./title.aux
+A level-1 auxiliary file: title.aux
 A level-1 auxiliary file: speech.aux
 A level-1 auxiliary file: dl_theory.aux
 Database file #1: bibliography.bib
-I was expecting a `,' or a `}'---line 70 of file bibliography.bib
- :     
- :     howpublished = {\url{https://www.washingtonpost.com/technology/2018/11/21/i-live-with-alexa-google-assistant-siri-heres-which-you-should-pick/?noredirect=on&utm_term=.6367751690f2}}
-(Error may have been on previous line)
-I'm skipping whatever remains of this entry
 Warning--empty journal in meanfield
 Warning--empty journal in blackbox
-You've used 5 entries,
-            1935 wiz_defined-function locations,
-            497 strings with 4476 characters,
-and the built_in function-call counts, 1607 in all, are:
-= -- 145
-> -- 73
-< -- 3
-+ -- 28
-- -- 24
-* -- 125
-:= -- 306
-add.period$ -- 13
-call.type$ -- 5
-change.case$ -- 37
-chr.to.int$ -- 5
-cite$ -- 7
-duplicate$ -- 65
-empty$ -- 102
-format.name$ -- 31
-if$ -- 294
-int.to.chr$ -- 1
-int.to.str$ -- 0
-missing$ -- 5
-newline$ -- 26
-num.names$ -- 15
-pop$ -- 36
-preamble$ -- 1
-purify$ -- 37
-quote$ -- 0
-skip$ -- 55
-stack$ -- 0
-substring$ -- 64
-swap$ -- 3
-text.length$ -- 0
-text.prefix$ -- 0
-top$ -- 0
-type$ -- 30
-warning$ -- 2
-while$ -- 10
-width$ -- 0
-write$ -- 59
-(There was 1 error message)
+(There were 2 warnings)

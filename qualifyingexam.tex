@@ -22,10 +22,6 @@
 \usepackage{soul}
 \usepackage{dirtree}
 \usetikzlibrary{shapes.geometric, arrows}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% For Footer
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \usepackage[english]{babel}
 \usepackage[utf8]{inputenc}
 \usepackage{fancyhdr}
@@ -34,6 +30,16 @@
 \usepackage[most]{tcolorbox}
 \usepackage{bm}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% For Multiple Columns within Text
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage{multicol}
+\usepackage[nottoc]{tocbibind}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% For Footer
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \pagestyle{fancy}
 \fancyhf{}
 \fancyhead[R]{\textbf{Advisor: Gari Clifford}}
@@ -43,11 +49,6 @@
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% For Multiple Columns within Text
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\usepackage{multicol}
-\usepackage[nottoc]{tocbibind}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % NEW COMMANDS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \newcommand\tab[1][1cm]{\hspace*{#1}}
@@ -55,7 +56,6 @@
 \newcommand{\vv}{\overrightarrow}
 \newcommand{\bs}{\textbackslash}
 \newtcolorbox{codebox}{
-    breakable,
     colback=blue!5!white,
     colframe=blue!75!black,
     breakable}
@@ -73,13 +73,12 @@
 }
 
 \urlstyle{same}
-
 \bibliographystyle{apalike}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{document}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %Title Page
-\include{./title}
+\include{title}
 \tableofcontents
 \include{speech}
 \include{dl_theory}
