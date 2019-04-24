@@ -3,7 +3,7 @@
 % \section{Prior Work}
 % \section{Preliminary Data}
 
-
+\chapter{Speech Recognition in a Medical Environment}
 \section{Background}
 
 Automatic speech recognition (ASR) has been a topic that interested many from an early age. Many consider it to have started in the 1950s with Bell Labs' \textit{Audrey} \cite{voicerecog_history}, which was able to do a single-speaker digit recognition. Seventy years later, the ASR technologies have grown so that they are present within our personal homes, with Amazon Alexa and Google Home devices \cite{asr_at_home}, as they have become more affordable. As the speech technologies advance, they approach the concept of ubiquitous computing (often also known as ambient intelligence), which is highly desirable for many industries. Although most of the ASR systems available for commerce are trained in normal language and not medical language, one industry that could greatly benefit from ASR technologies is the health care system, given that the ASR system is able to understand medical language.
@@ -41,18 +41,92 @@ In order to have a speech recognition system to be able to understand medical la
 
 \textcolor{red}{\textit{As one can see from the diagram above, the sound signals would come to a microphone or an array of microphones, which would then be passed through a system that performs blind source separation on the sound signal. It is very possible that, in a hospital environment, there may be multiple sources, such as the heart rate monitor, the ventilator, the healthcare providers talking, and others. A blind source separation algorithm would ensure to separate the audio channel to multiple sources. Once the sources have been separated, there would be a classification methodology to identify the physician from the patient, and ...}}
 
-Although there have been many advancements in the speech technologies and there currently exists very accurate engines to do voice recognition, it still remains to be an unsolved problem, as there is always room for improvement. Therefore, there are a lot of possibilities for the formulation design of the framework (i.e. pipeline).
+\subsection{AI-Complete and ASR-Complete}
+Although there have been many advancements in the speech technologies, especially through black boxes such as neural networks, and there currently exists very accurate engines to do voice recognition, it still remains to be an unsolved problem. The speech recognition problem is ASR-complete, which falls under the umbrella of AI-complete, which, by analogy of NP-completeness, means that the problem is hypothesized to deal with multiple parts of the AI world, and it cannot be solved by a single algorithm. Current technologies are not able to solve AI-complete problems, and they often require human computation. Since speech recognition is an AI-complete problem, there is still a lot of room for improvement in the fundamental problems that have not yet been solved, and although deep learning has recently shown promising results, deep learning neural networks (DNN) do not necessarily solve fundamental problems, as no one has a truthful understanding of how they work and behave. Therefore, there are a lot of possibilities for the formulation design of the framework (i.e. pipeline).
 
 \section{Speech Enhancement}
-\subsection{Convolutional Neural Networks for Noise Suppression}
+Speech enhancement is one of fundamental problems of speech that has not yet been fully solved yet, as noise is subjective, and there isn't necessarily one specific way of performing a fully accurate noise reduction for any type of noise. As previously mentioned before, a ventilator and heart rate monitor are examples of background noise that do not necessarily have a Gaussian distribution (i.e. it is not a white noise), yet, for ASR, they are both irrelevant. There are a number of methodologies that have been created to attempt to solve the problem of speech enhancement, and they may potentially be useful to be implemented onto the pipeline.
+
+\subsection{Recurrent Neural Networks for Noise Suppression}
+The work on recurrent neural networks (RNN) was originally worked sequentially by \cite{rnn1} and \cite{rnn2}, and it finally came to be coined by \cite{rnn3}. They have shown to work very efficiently with time-series data as their cyclic nature allows them to adapt to incoming inputs in a sequential form, working often times better than convolutional neural networks (CNN), when dealing with time-series data. Other variants of RNNs have been created, which allow them to store "memory" for future cases, with Long Short-Term Memory (LSTM) \cite{lstm1}, which were then further expanded with gates for Gated Recurrent Units (GRU) \cite{gru1} specifically to allow such units to forget information, and a visual representation of LSTMs and GRUs are shown on Figure \ref{fig::LSTM_GRU}
+
+\begin{figure}[H]
+\begin{center}
+    \raisebox{-0.5\height}{\includegraphics[width=0.45\textwidth]{"./images/LSTM".png}}
+    \raisebox{-0.5\height}{\includegraphics[width=0.45\textwidth]{"./images/GRU".png}}
+    \caption{A visual representation of the LSTM cell (Left) and the GRU cell (Right). The LSTM contains three representations of its states: the cell state/memory $c_t$, the hidden states $h_t$, and the input state $x_t$, all of which occurs at time $t$. On the GRU, there are the input state $x_t$, the hidden state $h_t$, the update gate $z_t$ and the reset gate $r_t$. The $\sigma$ block is used to represent a sigmoid function, and the $\tanh$ block is used to represent a hyperbolic tangent for both images. Please see \ref{app:LSTM_GRU} for the mathematical expressions of the cells above}
+    \label{fig::LSTM_GRU}
+\end{center}
+\end{figure}
+
+Because of the nature of the network being able to receive continuous sequential inputs, it becomes a very attractive model to potentially behave as an adaptive filter. Hence, members from the Xiph.Org Foundation, a non-profit organization, along with Mozilla have created a RNN architecture that is based on GRUs called RRNoise \cite{rrnoise}, which, after trained, is able to reduce a lot of the background noise of audio files, thus enhancing the signal. Below on Figure \ref{fig::RRNoisearch} is the topology of the RRNoise architecture, where it outputs voice activity detection (VAD) as well as the gains from the input features.
+
+\begin{figure}[H]
+\begin{center}
+    \includegraphics[width=0.65\textwidth]{"./images/RRNoise".png}
+    \caption{The topology of the RRNoise network used to perform noise reduction}
+    \label{fig::RRNoisearch}
+\end{center}
+\end{figure}
+
 \subsection{Non-Negative Matrix Factorization}
-Please skip to the Blind Source Separation's subsection on \hyperref[sec:NMF]{Non-Negative Matrix Factorization}
+Another very neat way of performing speech enhancement is via non-negative matrix factorization. Please skip to the Blind Source Separation's subsection on \hyperref[sec:NMF]{Non-Negative Matrix Factorization} \cite{spectralclustering}
+
 \section{Blind Source Separation}
+Given that a recording seldom contains one and only one speaker speaking at a time, an ASR may find itself troubled in detecting who is the speaker and who should be taken as the background. This is namely known as the Cocktail Party Effect. Its name originates from the idea that, in a cocktail party, there are multiple people speaking to one another. While a human is able to have a conversation with another, focusing on his/her friend while having all of the other speakers (i.e. sources) as background, an ASR system is not able to do so. Hence it is important to be able to separate a mixed signal to then be able to focus on a single individual and this is called blind source separation (BSS). There are two methodologies that are proposed to perform BSS: independent component analysis, and non-negative matrix factorization.
+
+
 \subsection{Independent Component Analysis}
 \subsection{Non-Negative Matrix Factorization (NMF) and Sparse NMF} \label{sec:NMF}
+One of the major drawbacks from any methodology in ICA is that it requires $N$ or more observations (i.e. microphone recordings) for $N$ sources (e.g. speakers, noise), which, depending on the circumstance, may be limiting. The method of non-negative matrix factorization (NMF), however, is able to perform BSS with very high accuracies, while using a single-channel recording. NMF originated in the field of chemometrics, where chemists were trying to identify contents of solutions via positive matrix factorization \cite{pmf} \cite{pmf_chem}. It was later further developed in \cite{nmf1} and algorithms were then better formulated in \cite{nmf2}.
+
+The concept behind NMF is that a mixed signal should be able to be decomposed into its unmixed signals, under the assumption that all of the superpositioned signals are non-negatively added to one another. In other words, they are positively added, but their value may also be zero. Conceptually, this makes absolute sense. If one see the work in \cite{nmf1}, one will see that many of the components added are interpretations of existing physical features, such as eyebrows and mustache. It does not make sense to add a negative eyebrow to reconstruct one's face. Hence, in retrospect, it makes complete sense why this methodology was being used in chemometrics, as it does not make sense to add a negative sulfate ion to a solution.
+
+One may ask how is this factorization different from other types of factorizations, such as principal component analysis (PCA). First, every factorization has different purposes; for instance, a Cholesky decomposition was specifically made to obtain lower computation complexity in order to invert matrices, where as PCA was made to obtain information about its principal orthogonal components. Second, when looking at the comparison between a signal reconstruction or separation from an NMF and from PCA, PCA poses a lot of problems. PCA only allows for the feature space to represent vectors that are orthogonal, which is not always the case. In the sense of speech, it is almost impossible for one speech signal to be orthogonal to another one. PCA also assumes that the probability distribution of the data follows a multivariate Gaussian, which again is not always the case. A NNF is very promising as it performs a matrix decomposition, which is very desirable for computational reconstruction in the last step of the BSS, and it is able to attain reconstructions just as detailed as some of the other reconstruction techniques, plus one is allowed to determine how many components to use.
+
+Here, the notation follows the notations shown in \cite{singlechannel}.
+
+Consider the magnitude of a spectrogram of a mixed speech signal $\bm{Y} \in \mathbb{R}^{M\times N}$, which is a summation of $R$ source signals (i.e. $\bm{Y} = \sum_{i=1}^{R} \bm{Y}_i$). The spectrogram can be sparsely represented in an overcomplete basis as
+
+$$\bm{Y} = \bm{D} \bm{H}$$
+
+where $\bm{D} \in \mathbb{R}^{M \times R}$ represents a compendium of dictionaries with $R$ columns, which can be chosen by the user, and $\bm{H} \in \mathbb{R}^{R \times N}$ represents a code matrix, which is sparse and it contains code matrices associated with the dictionaries in $\bm{D}$. The matrix $\bm{D}$ and $\bm{H}$ can be represented as
+\begin{equation*}
+    \bm{D} = \begin{bmatrix}
+    | & | & & | \\
+    | & | & & | \\
+    | & | & & | \\
+    \bm{D}_1 & \bm{D}_2 & \cdots & \bm{D}_R \\
+    | & | & & | \\
+    | & | & & | \\
+    | & | & & | \\
+    \end{bmatrix}
+\end{equation*}
+
+\begin{equation*}
+\bm{H} =
+    \begin{bmatrix}
+        --- & --- & --- & \bm{H}_1 & --- & --- & --- \\
+        --- & --- & --- & \bm{H}_1 & --- & --- & --- \\
+            &     &     & \vdots   &     &     &     \\
+        --- & --- & --- & \bm{H}_R & --- & --- & --- \
+    \end{bmatrix}
+\end{equation*}
+
+A simple version of how a NMF would work is shown in Figure \ref{fig::nmf_simple}
+
+\begin{figure}[H]
+\begin{center}
+    \includegraphics[width=0.85\textwidth]{"./images/nmf1".png}
+    \caption{A very simple schematic of a non-negative matrix factorization}
+    \label{fig::nmf_simple}
+\end{center}
+\end{figure}
 
 \section{Speaker Diarisation}
 \section{Speaker Verification}
 \section{Speech Recognition}
 \subsection{Hidden-Markov Models and Gaussian Mixture Models}
 \subsection{Long Short Term Memory Networks}
+
+\section{Features from Speech}

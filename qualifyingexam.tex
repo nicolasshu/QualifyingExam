@@ -1,4 +1,4 @@
-\documentclass[onecolumn]{article}
+\documentclass[onecolumn]{book}
 
 \def\arcdeg{\hbox{$^\circ$}}
 \def\arcmin{\hbox{$^\prime$}}
@@ -29,6 +29,7 @@
 \usepackage{framed}
 \usepackage[most]{tcolorbox}
 \usepackage{bm}
+\usepackage[toc,page]{appendix}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % For Multiple Columns within Text
@@ -80,11 +81,23 @@
 %Title Page
 \include{title}
 \tableofcontents
+\section{Key Papers}
+\begin{itemize}
+    \item \cite{meanfield}
+    \item \cite{blackbox}
+    \item \cite{thermo}
+    \item \cite{deeprelaxation}
+    \item \cite{nmf2}
+\end{itemize}
 \include{speech}
 \include{dl_theory}
 
+Knowledge comes from finding the answers. Yes, but understanding what the answers mean is what brings wisdom.
+
+
 % \href{run:./file.txt}{File.txt}
 % \section{First Section}
+\include{appendix}
 
 \bibliography{bibliography}
 

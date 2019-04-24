@@ -1,10 +1,26 @@
 \begin{thebibliography}{}
 
+\bibitem[Anttila et~al., 1995]{pmf_chem}
+Anttila, P., Paatero, P., Tapper, U., and Järvinen, O. (1995).
+\newblock Source identification of bulk wet deposition in finland by positive
+  matrix factorization.
+\newblock {\em Atmospheric Environment}, 29(14):1705 -- 1718.
+
+\bibitem[Barak, 1988]{rnn2}
+Barak, A.~P. (1988).
+\newblock Learning state space trajectories in recurrent neural networks.
+\newblock {\em Neural Computation}, 1:263--269.
+
 \bibitem[Chaudhari et~al., 2018]{deeprelaxation}
 Chaudhari, P., Oberman, A., Osher, S., Soatto, S., and Carlier, G. (2018).
 \newblock Deep relaxation: Partial differential equations for optimizing deep
   neural networks.
 \newblock {\em Research in the Mathematical Sciences}, 5(30).
+
+\bibitem[Cleeremans et~al., 1989]{rnn3}
+Cleeremans, A., Servan-Schreiber, D., and McClelland, J.~L. (1989).
+\newblock Finite-state automata and simple recurrent networks.
+\newblock {\em Neural Computation}, 1(3):372--381.
 
 \bibitem[E et~al., 2018]{meanfield}
 E, W., Han, J., and Li, Q. (2018).
@@ -16,10 +32,65 @@ Fowler, G. (2018).
   should pick.
 \newblock {\em The Washington Post: The Switch Review}.
 
+\bibitem[Gers et~al., 2000]{gru1}
+Gers, F.~A., Schmidhuber, J., and Cummins, F.~A. (2000).
+\newblock Learning to forget: Continual prediction with lstm.
+\newblock {\em Neural Computation}, 12:2451--2471.
+
+\bibitem[Goldt and Seifert, 2017]{thermo}
+Goldt, S. and Seifert, U. (2017).
+\newblock Stochastic thermodynamics of learning.
+\newblock {\em Physical Review Letters}, 118.
+
+\bibitem[Hochreiter and Schmidhuber, 1997]{lstm1}
+Hochreiter, S. and Schmidhuber, J. (1997).
+\newblock Long short-term memory.
+\newblock {\em Neural Computation}, 9(8):1735--1780.
+
+\bibitem[Jean-Marc et~al., 2017]{rrnoise}
+Jean-Marc, Xiph.Org, and Mozilla (2017).
+\newblock Rrnoise.
+
+\bibitem[Jordan, 1986]{rnn1}
+Jordan, M.~I. (1986).
+\newblock Attractor dynamics and parallelism in a connectionist seuential
+  machine.
+\newblock {\em Cognitive Science Conference}, pages 531--546.
+
+\bibitem[Lee and Seung, 1999]{nmf1}
+Lee, D.~D. and Seung, H.~S. (1999).
+\newblock Learning the parts of objects by non-negative matrix factorization.
+\newblock {\em Nature}, 401(6755):788--791.
+
+\bibitem[Lee and Seung, 2000]{nmf2}
+Lee, D.~D. and Seung, H.~S. (2000).
+\newblock Algorithms for non-negative matrix factorization.
+\newblock In {\em Proceedings of the 13th International Conference on Neural
+  Information Processing Systems}, NIPS'00, pages 535--541, Cambridge, MA, USA.
+  MIT Press.
+
 \bibitem[Moskvitch, 2017]{voicerecog_history}
 Moskvitch, K. (2017).
 \newblock The machines that learned to listen.
 \newblock {\em BBC Future}.
+
+\bibitem[Ng et~al., 2001]{spectralclustering}
+Ng, A.~Y., Jordan, M.~I., and Weiss, Y. (2001).
+\newblock On spectral clustering: Analysis and an algorithm.
+\newblock In {\em ADVANCES IN NEURAL INFORMATION PROCESSING SYSTEMS}, pages
+  849--856. MIT Press.
+
+\bibitem[Paatero and Tapper, 1994]{pmf}
+Paatero, P. and Tapper, U. (1994).
+\newblock Positive matrix factorization: A non-negative factor model with
+  optimal utilization of error estimates of data values.
+\newblock {\em Environmetrics}, 5(2):111--126.
+
+\bibitem[Schmidt and Olsson, 2006]{singlechannel}
+Schmidt, M.~N. and Olsson, R.~K. (2006).
+\newblock Single-channel speech separation using sparse non-negative matrix
+  factorization.
+\newblock In {\em INTERSPEECH}.
 
 \bibitem[Shwartz-Ziv and Tishby, 2017]{blackbox}
 Shwartz-Ziv, R. and Tishby, N. (2017).

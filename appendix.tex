@@ -1,0 +1,38 @@
+\begin{appendices}
+\chapter{Methodologies}
+\section{Long Short-Term Memory and Gated Recurrent Unit}
+\label{app:LSTM_GRU}
+
+\begin{center}
+\begin{figure}[H]
+    \raisebox{-0.5\height}{\includegraphics[width=0.45\textwidth]{"./images/LSTM".png}}
+    \raisebox{-0.5\height}{\includegraphics[width=0.45\textwidth]{"./images/GRU".png}}
+    \caption{A visual representation of the LSTM cell and the GRU cell}
+    \label{app::LSTM_GRU}
+\end{figure}
+\end{center}
+
+The LSTM and the GRU cell units are shown in Figure \ref{app::LSTM_GRU}. The equations that govern the LSTM are
+\begin{equation*}
+\begin{cases}
+\begin{pmatrix} i \\ f \\ o \\ g \end{pmatrix} = \begin{pmatrix} \sigma \\ \sigma \\ \sigma \\ \tanh \end{pmatrix} W \begin{pmatrix} h_{t-1} \\ x_t \end{pmatrix} \\
+c_t f \cdot c_{t-1} + i \cdot g \\
+h_t = o \cdot \tanh(c_t)
+\end{cases}
+\end{equation*}
+
+The equations that govern the GRU are
+\begin{equation*}
+\begin{cases}
+\text{Update Gate: } &  z_t = \sigma(W_z [h_{t-1},x_t]) \\
+\text{Reset Gate: } & r_t = \sigma(W_r[h_{t-1},x_t]) \\
+\text{Current Memory Content: } & \tilde{h}_t = \tanh(W \cdot [r_t \cdot h_{t-1}, x_t]) \\
+\text{Final Memory: } & h_t = (1-z_t) \cdot h_{t-1} + z_t \cdot \tilde{h}_t
+\end{cases}
+\end{equation*}
+
+
+\section{Mel-Frequency Cepstrum Coefficients}
+\section{Linear Prediction Coefficients and its Derivatives}
+
+\end{appendices}

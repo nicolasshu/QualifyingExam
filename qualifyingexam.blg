@@ -3,7 +3,10 @@ The style file: apalike.bst
 A level-1 auxiliary file: title.aux
 A level-1 auxiliary file: speech.aux
 A level-1 auxiliary file: dl_theory.aux
+A level-1 auxiliary file: appendix.aux
 Database file #1: bibliography.bib
+Warning--entry type for "rrnoise" isn't style-file defined
+--line 147 of file bibliography.bib
 Warning--empty journal in meanfield
 Warning--empty journal in blackbox
-(There were 2 warnings)
+(There were 3 warnings)
