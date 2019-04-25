@@ -1,7 +1,6 @@
 \begin{appendices}
 \chapter{Methodologies}
-\section{Long Short-Term Memory and Gated Recurrent Unit}
-\label{app:LSTM_GRU}
+\section{Long Short-Term Memory and Gated Recurrent Unit} \label{app:LSTM_GRU}
 
 \begin{center}
 \begin{figure}[H]
@@ -12,7 +11,7 @@
 \end{figure}
 \end{center}
 
-The LSTM and the GRU cell units are shown in Figure \ref{app::LSTM_GRU}. The equations that govern the LSTM are
+The LSTM and the GRU cell units are shown in Figure \ref{app::LSTM_GRU}, where $\sigma$ depicts the sigmoid function. The equations that govern the LSTM are
 \begin{equation*}
 \begin{cases}
 \begin{pmatrix} i \\ f \\ o \\ g \end{pmatrix} = \begin{pmatrix} \sigma \\ \sigma \\ \sigma \\ \tanh \end{pmatrix} W \begin{pmatrix} h_{t-1} \\ x_t \end{pmatrix} \\
@@ -31,8 +30,11 @@ The equations that govern the GRU are
 \end{cases}
 \end{equation*}
 
-\section{Spectral Clustering}
-\label{app:spectralclustering}
+Although sigmoid functions are often frowned upon in the deep learning community due to the inevitable fact that often times, the gradients become zero at very high or low values, the sigmoids behave as switch knobs for the acceptance or rejection of previous information on the cell memory $c_t$ or on the hidden states $h_t$, which are coming from previous iterations. The vanishing gradient problem is avoided in LSTM and GRU or any network with forget gates through the concept of linear carousel. 
+\section{Gaussian Mixture Models} \label{app:gmm}
+
+
+\section{Spectral Clustering} \label{app:spectralclustering}
 \section{Mel-Frequency Cepstrum Coefficients}
 \section{Linear Prediction Coefficients and its Derivatives}
 

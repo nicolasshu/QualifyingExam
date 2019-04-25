@@ -16,11 +16,27 @@ Cleeremans, A., Servan-Schreiber, D., and McClelland, J.~L. (1989).
 \newblock Finite-state automata and simple recurrent networks.
 \newblock {\em Neural Computation}, 1(3):372--381.
 
+\bibitem[Duda and Hart, 1973]{dudaHart1973}
+Duda, R.~O. and Hart, P.~E. (1973).
+\newblock {\em Pattern Classification and Scene Analysis}.
+\newblock John Willey \& Sons, New Yotk.
+
 \bibitem[{Eggert} and {Korner}, 2004]{sparsenmf}
 {Eggert}, J. and {Korner}, E. (2004).
 \newblock Sparse coding and nmf.
 \newblock In {\em 2004 IEEE International Joint Conference on Neural Networks
   (IEEE Cat. No.04CH37541)}, volume~4, pages 2529--2533 vol.4.
+
+\bibitem[Figueiredo and Jain, 2002]{GMM1}
+Figueiredo, M. A.~T. and Jain, A.~K. (2002).
+\newblock Unsupervised learning of finite mixture models.
+\newblock {\em IEEE Transactions on Pattern Analysis and Machine Intelligence},
+  24(3):381--396.
+
+\bibitem[{Forney}, 1973]{viterbi_algorithm}
+{Forney}, G.~D. (1973).
+\newblock The viterbi algorithm.
+\newblock {\em Proceedings of the IEEE}, 61(3):268--278.
 
 \bibitem[Fowler, 2018]{asr_at_home}
 Fowler, G. (2018).
@@ -32,6 +48,23 @@ Fowler, G. (2018).
 Gers, F.~A., Schmidhuber, J., and Cummins, F.~A. (2000).
 \newblock Learning to forget: Continual prediction with lstm.
 \newblock {\em Neural Computation}, 12:2451--2471.
+
+\bibitem[Graves and Jaitly, 2014]{ASR_RNN_end2end}
+Graves, A. and Jaitly, N. (2014).
+\newblock Towards end-to-end speech recognition with recurrent neural networks.
+\newblock In {\em Proceedings of the 31st International Conference on
+  International Conference on Machine Learning - Volume 32}, ICML'14, pages
+  II--1764--II--1772. JMLR.org.
+
+\bibitem[Graves et~al., 2013]{ASR_RNN}
+Graves, A., Mohamed, A., and Hinton, G.~E. (2013).
+\newblock Speech recognition with deep recurrent neural networks.
+\newblock {\em CoRR}, abs/1303.5778.
+
+\bibitem[Han et~al., 2018]{ASR_LSTM}
+Han, K.~J., Chandrashekaran, A., Kim, J., and Lane, I.~R. (2018).
+\newblock The {CAPIO} 2017 conversational speech recognition system.
+\newblock {\em CoRR}, abs/1801.00059.
 
 \bibitem[Hochreiter and Schmidhuber, 1997]{lstm1}
 Hochreiter, S. and Schmidhuber, J. (1997).
@@ -81,10 +114,40 @@ Paatero, P. and Tapper, U. (1994).
   optimal utilization of error estimates of data values.
 \newblock {\em Environmetrics}, 5(2):111--126.
 
+\bibitem[Rabiner, 1989]{rabiner_hmm_speech}
+Rabiner, L.~R. (1989).
+\newblock A tutorial on hidden markov models and selected applications in
+  speech recognition.
+\newblock {\em Proceedings of the IEEE}, 77(2):257--286.
+
+\bibitem[Rabiner and Juang, 1986]{rabiner_juang_hmm}
+Rabiner, L.~R. and Juang, B.-H. (1986).
+\newblock An introduction to hidden markov models.
+\newblock {\em IEEE ASSP Magazine}, 3:4--16.
+
 \bibitem[Schmidt and Olsson, 2006]{singlechannel}
 Schmidt, M.~N. and Olsson, R.~K. (2006).
 \newblock Single-channel speech separation using sparse non-negative matrix
   factorization.
 \newblock In {\em INTERSPEECH}.
+
+\bibitem[Tiwari and Lotia, 2012]{advantageUBM}
+Tiwari, M.~S. and Lotia, P. (2012).
+\newblock Speaker verification system using gaussian mixture model & ubm.
+\newblock {\em International Journal of Digital Application & Contemporary
+  Research}, 1(3).
+
+\bibitem[VITERBI, 1967]{viterbi_original}
+VITERBI, A.~J. (1967).
+\newblock Error bounds for convolutional codes and an asymptotically optimal
+  decoding algorithm.
+\newblock {\em IEEE Transactions on Information Theory}, 13:260--269.
+
+\bibitem[Zhang et~al., 2016]{ASR_CNN_end2end}
+Zhang, Y., Pezeshki, M., Brakel, P., Zhang, S., Laurent, C., Bengio, Y., and
+  Courville, A. (2016).
+\newblock Towards end-to-end speech recognition with deep convolutional neural
+  networks.
+\newblock In {\em Interspeech 2016}, pages 410--414.
 
 \end{thebibliography}
