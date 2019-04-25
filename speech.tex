@@ -77,7 +77,8 @@ Given that a recording seldom contains one and only one speaker speaking at a ti
 
 
 \subsection{Independent Component Analysis}
-\subsection{Non-Negative Matrix Factorization (NMF) and Sparse NMF} \label{sec:NMF}
+\subsection{Non-Negative Matrix Factorization (NMF) and Sparse NMF (SNMF)} \label{sec:NMF}
+\subsubsection{Background}
 One of the major drawbacks from any methodology in ICA is that it requires $N$ or more observations (i.e. microphone recordings) for $N$ sources (e.g. speakers, noise), which, depending on the circumstance, may be limiting. The method of non-negative matrix factorization (NMF), however, is able to perform BSS with very high accuracies, while using a single-channel recording. NMF originated in the field of chemometrics, where chemists were trying to identify contents of solutions via positive matrix factorization \cite{pmf} \cite{pmf_chem}. It was later further developed in \cite{nmf1} and algorithms were then better formulated in \cite{nmf2}.
 
 The concept behind NMF is that a mixed signal should be able to be decomposed into its unmixed signals, under the assumption that all of the superpositioned signals are non-negatively added to one another. In other words, they are positively added, but their value may also be zero. Conceptually, this makes absolute sense. If one see the work in \cite{nmf1}, one will see that many of the components added are interpretations of existing physical features, such as eyebrows and mustache. It does not make sense to add a negative eyebrow to reconstruct one's face. Hence, in retrospect, it makes complete sense why this methodology was being used in chemometrics, as it does not make sense to add a negative sulfate ion to a solution.
@@ -113,20 +114,114 @@ where $\bm{D} \in \mathbb{R}^{M \times R}$ represents a compendium of dictionari
     \end{bmatrix}
 \end{equation*}
 
-A simple version of how a NMF would work is shown in Figure \ref{fig::nmf_simple}
+A simple version of how a NMF would work is shown in Figure \ref{fig::nmf_simple}, where the figure below was inspired on the works from \cite{singlechannel}.
 
 \begin{figure}[H]
 \begin{center}
     \includegraphics[width=0.85\textwidth]{"./images/nmf1".png}
-    \caption{A very simple schematic of a non-negative matrix factorization}
+    \caption{A very simple schematic of a non-negative matrix factorization, where the matrix on the left represents the mixed signal, the matrix on the center represents the dictionary matrix, and the matrix on the right represents the coding matrix}
     \label{fig::nmf_simple}
 \end{center}
 \end{figure}
 
-\section{Speaker Diarisation}
-\section{Speaker Verification}
-\section{Speech Recognition}
-\subsection{Hidden-Markov Models and Gaussian Mixture Models}
-\subsection{Long Short Term Memory Networks}
+There are two different ways to obtain the desired decomposition, and that is based on what optimization approach one wishes to take. One approach is to minimize the squared Euclidean-based Frobenius norm, $\| \bm{Y} - \bm{D}\bm{H} \|^2_F $, and another approach is to minimize the divergence, $\mathcal{D}(\bm{Y}\|\bm{DH})$, both cases with respect to $\bm{W}$ and $\bm{H}$, subject to the contraints that $\bm{D},\bm{H} \geq 0$ \cite{nmf2}. Both of their definitions are shown below, where the subscript $i$ represents the $i^{th}$ row, and the $j$ represents the $j^{th}$ column. Notice that the divergence measurement below is not the Kullback-Leibler (KL) divergence, but it does converge to the KL divergence if $\sum_{ij} A_{ij} = \sum_{ij} B_{ij} = 1$s
 
-\section{Features from Speech}
+\begin{equation*}
+\begin{dcases}
+\text{Norm:} & \|A - B \|^2_F = \sum_{i,j} (A_{ij} - B_{ij})^2 \\
+\text{Divergence:} & \mathcal{D}(A\|B) = \sum_{i,j} \left(A_{ij} \log \left( \frac{A_{ij}}{{B_{ij}}}  - A_{ij} + B_{ij} \right) \right)
+\end{dcases}
+\end{equation*}
+
+Because this is an iterative algorithm, if one follows the norm minimization, the update rules are:
+
+\begin{codebox}
+NMF Algorithm for Norm Minimization
+\begin{align*}
+    &1. \text{Initialize }\bm{D,H} \geq 0 \\
+    &2. \bm{H}_{ij} \leftarrow \bm{H}_{ij} \frac{ (\bm{D}^T \bm{Y})_{ij} }{ (\bm{D}^T \bm{D} \bm{H})_{ij} } \\
+    &3. \bm{D}_{ij} \leftarrow \bm{D}_{ij} \frac{ (\bm{Y} \bm{H}^T)_{ij} }{ (\bm{D}\bm{H}\bm{H}^T)_{ij} } \\
+    &4. \text{Repeat 2,3 until stability}
+\end{align*}
+\end{codebox}
+
+If one follows the divergence minimization, the update rules are
+\begin{codebox}
+NMF Algorithm for Divergence Minimization
+\begin{align*}
+    &1. \text{Initialize }\bm{D,H} \geq 0 \\
+    &2. \bm{H}_{ij} \leftarrow \bm{H}_{ij} \frac{ \sum_k \bm{D}_{ki} \bm{Y}_{kj} / (\bm{DH})_{kj} }{ \sum_l \bm{D}_{li} } \\
+    &3. \bm{D}_{ij} \leftarrow \bm{D}_{ij} \frac{ \sum_k \bm{H}_{jk} \bm{Y}_{ik} / (\bm{DH})_{ik} }{ \sum_l \bm{H}_{jl} } \\
+    &4. \text{Repeat 2,3 until stability}
+\end{align*}
+\end{codebox}
+
+If one performs an NMF, a visual representation is shown on Figure \ref{fig::nmf_example}, where the figure below was inspired on the works from \cite{singlechannel}.
+
+\begin{figure}[H]
+\begin{center}
+    \includegraphics[width=0.85\textwidth]{"./images/nmf2".png}
+    \caption{A visual example of an NMF result, with two sources being separated.}
+    \label{fig::nmf_example}
+\end{center}
+\end{figure}
+
+
+The algorithms for NMF were further improved by \cite{sparsenmf}, where the authors created a Sparse NMF. Their work was inspired by the basic NMF problems that, when one had overcomplete dictionaries, there was no well defined solution such that you would obtain sparse solutions. Thus, they wanted to make sure to obtain sparse solutions, especially on the coding matrix. To tune the sparsity measurement, the authors simply applied a L1 regularization based on the coding matrix coefficients on the cost functional of the norm, and called it a Sparse NMF. In other words, the cost (or energy) functional that originally was $\mathcal{E} = \| Y - \bar{\bm{D}} \bm{H} \|_F^2$ became
+
+$$\mathcal{E} = \| \bm{Y} - \bar{\bm{D}} \bm{H} \|_F^2 + \underbrace{\lambda \sum_{i,j} H_{ij}}_{L1\text{ regularization}} \quad s.t. \quad \bm{D},\bm{H} \geq 0$$
+
+where $\bar{\bm{D}}$ still follows the notation of \cite{singlechannel}, representing a column-wise normalized dictionary matrix, and $\lambda$ is the parameter to control the degree of sparsity. To solve this optimization problem, if one was to set $\bm{R} = \bm{DH}$, then one would obtain the following algorithm. Note, for this one case, that the dot sign $\cdot$ and and division operator $\frac{a}{b}$ represent point-wise multiplication and division
+
+\begin{codebox}
+Sparse NMF Algorithm for Frobenius Norm L1 Regularized Minimization
+\begin{align*}
+    &1. \text{Initialize }\bm{D,H} \geq 0 \\
+    &2. \bm{H}_{ij} \leftarrow \bm{H}_{ij} \cdot \frac{ \bm{Y}_i^T \bar{\bm{D}}_j }{  \bm{R}_i^T  \bar{\bm{D}}_j + \lambda } \quad \quad \quad \quad \quad \quad \quad \quad \in \mathbb{R}^1 \cdot \frac{\mathbb{R}^{1\times M} \mathbb{R}^{M \times 1}}{\mathbb{R}^{1\times M} \mathbb{R}^{M \times 1} + \mathbb{R}^{1}} \\
+    &3. \bm{D}_{ij} \leftarrow \bm{D}_{ij} \cdot \frac{ \sum_i \bm{H}_{ij} [ \bm{Y}_i + (\bm{R}_i^T \bar{\bm{D}}_j) \bar{\bm{D}}_j] }{ \sum_i \bm{H}_ij [\bm{R}_i + (\bm{Y}_i \bar{\bm{D}}_j) \bar{\bm{D}}_j ]} \quad \quad \quad \quad \in \mathbb{R}^{M\times 1} \cdot \frac{  \sum_i \mathbb{R}^{1} + (\mathbb{R}^{1\times M} \mathbb{R}^{M\times 1})\mathbb{R}^{M\times 1}  }{ \sum_i \mathbb{R}^{1} [\mathbb{R}^{M \times 1} + (\mathbb{R}^{1\times M} \mathbb{R}^{M\times 1}) \mathbb{R}^{M\times 1}]  }\\
+    &4. \text{Repeat 2,3 until stability}
+\end{align*}
+\end{codebox}
+
+All of the algorithms shown above are the steps necessary to train the algorithm, where $\bm{Y}$ contains all of the training data. In order to actually perform a speech reconstruction, one should simply perform the algorithms above, but to keep the dictionary matrix $\bm{D}$ fixed and update only the code matrix $\bm{H}$. The speech is then separated by conputing the reconstruction of parts of the sparse decomposition. In other words:
+\begin{enumerate}
+    \item Apply NMF or Sparse NMF to learn the dictionaries of individual speakers
+    \item To separate the mixtures, keep $\bm{D}$ fixed, and only update $\bm{H}$
+    \item Reconstruct the signal by using the desired parts of the decomposition
+\end{enumerate}
+
+
+\subsubsection{Aproaches to Learn Dictionaries}
+As shown in \cite{singlechannel}, there are multiple approaches to perform BSS with NMF or SNMF: unsupervised approach and segmenting the training data and solving multiple NMF problems
+
+In the unsupervised approach, one would compute the SNMF over a very large dataset matrix $\bm{Y}$ of a single speaker to obtain a single dictionary. This, however, may take a lot of computation time. The second approach, used in \cite{singlechannel} involved segmenting the training data according to phoneme labels obtained by a speech recognition software with hidden-Markov models (HMM) for a single speaker, and creating a sparse dictionary for each phoneme, and finally , a final dictionary would be constructed by the concatenation of individual phoneme dictionaries. In order to create the dictionary of each phoneme, each type of phoneme would be concatenated together, to create that phoneme's dictionary, and then, the phonemes dictionaries would be concatenated together to create a dictionary that is representative of the speaker. Figure \ref{fig::speaker_dict} shows an illustration on how to create the dictionary.
+
+\begin{figure}[H]
+\begin{center}
+    \includegraphics[width=0.45\textwidth]{"./images/speaker_dict".png}
+    \caption{An illustration on how to create a speaker's dictionary $\bm{D}_i$}
+    \label{fig::speaker_dict}
+\end{center}
+\end{figure}
+
+\subsubsection{NMF for Speech Enhancement}
+The works from \cite{nmf_denoising} have shown that it is also possible to perform speech enhancement on a speech signal via non-negative matrix factorization. An illustration on Figure \ref{fig::nmf_denoising}, inspired by the images on \cite{nmf_denoising}, shows the procedure. It is possible to generate the dictionary matrix $\bm{D}$ and the coding matrix $\bm{H}$ from a noisy signal, however one would not know which of the subdictionaries $\bm{D}_i$ or the code submatrices $\bm{H}_i$ represent the ones associated with the speech and with the noise. Through spectral clustering (for technical details, see \ref{app:spectralclustering}), it is possible to group the subparts of the dictionary matrix and the code matrix so that it is differentiated between speech and noise. Given that the reconstruction process is based on linear algebra rules, it is then possible to simply multiply the dictionary matrix related to speech $\bm{D}_{speech}$ and the code matrix related to speech $\bm{H}_{speech}$ to obtain the cleaned speech.
+
+Of course this solution is not guaranteed to remove every single noise source due to the possible stochasticity that is propagated to the eigenvectors of the Laplacian, and the fact that the solution is not unique, which is based on the initialization of the centroids of the k-means algorithm, but it could be a good fundamental method to implement.
+
+\begin{figure}[h]
+\begin{center}
+    \includegraphics[width=0.4\textwidth]{"./images/nmf_denoising".png}
+    \caption{An illustration on how to use non-negative matrix factorization to denoise a signal, where $\bm{Y}$ represents the noisy signal, $\bm{D}$ represents the dictionary matrix obtained through NMF, and $\bm{H}$ represents the code matrix, also attained through the NMF. }
+    \label{fig::nmf_denoising}
+\end{center}
+\end{figure}
+
+
+% \section{Speaker Diarisation}
+% \section{Speaker Verification}
+% \section{Speech Recognition}
+% \subsection{Hidden-Markov Models and Gaussian Mixture Models} \label{sec:hmm}
+% \subsection{Long Short Term Memory Networks}
+%
+% \section{Features from Speech}

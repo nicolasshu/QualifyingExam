@@ -25,6 +25,7 @@
 \usepackage[english]{babel}
 \usepackage[utf8]{inputenc}
 \usepackage{fancyhdr}
+\usepackage{mathtools}
 \usepackage{minibox}
 \usepackage{framed}
 \usepackage[most]{tcolorbox}
@@ -62,7 +63,7 @@
     breakable}
 \newtcolorbox{emailbox}{breakable,colback=red!5!white,colframe=red!75!black}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% For Links to Websites
+% For Links to Websites 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % https://www.sharelatex.com/learn/Hyperlinks
 \usepackage{hyperref}
@@ -79,25 +80,25 @@
 \begin{document}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %Title Page
-\include{title}
-\tableofcontents
-\section{Key Papers}
-\begin{itemize}
-    \item \cite{meanfield}
-    \item \cite{blackbox}
-    \item \cite{thermo}
-    \item \cite{deeprelaxation}
-    \item \cite{nmf2}
-\end{itemize}
+% \include{title}
+% \tableofcontents
+% \section{Key Papers}
+% \begin{itemize}
+%     \item \cite{meanfield}
+%     \item \cite{blackbox}
+%     \item \cite{thermo}
+%     \item \cite{deeprelaxation}
+%     \item \cite{nmf2}
+%     \item \cite{sparsenmf}
 \include{speech}
-\include{dl_theory}
+% \include{dl_theory}
 
 Knowledge comes from finding the answers. Yes, but understanding what the answers mean is what brings wisdom.
 
 
 % \href{run:./file.txt}{File.txt}
 % \section{First Section}
-\include{appendix}
+% \include{appendix}
 
 \bibliography{bibliography}
 
