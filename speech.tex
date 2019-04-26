@@ -51,7 +51,7 @@ Although there have been many advancements in the speech technologies, especiall
 Speech enhancement is one of fundamental problems of speech that has not yet been fully solved yet, as noise is subjective, and there isn't necessarily one specific way of performing a fully accurate noise reduction for any type of noise. As previously mentioned before, a ventilator and heart rate monitor are examples of background noise that do not necessarily have a Gaussian distribution (i.e. it is not a white noise), yet, for ASR, they are both irrelevant. There are a number of methodologies that have been created to attempt to solve the problem of speech enhancement, and they may potentially be useful to be implemented onto the pipeline.
 
 \subsection{Recurrent Neural Networks for Noise Suppression} \label{sec:rnn}
-The work on recurrent neural networks (RNN) was originally worked sequentially by \cite{rnn1} and \cite{rnn2}, and it finally came to be coined by \cite{rnn3}. They have shown to work very efficiently with time-series data as their cyclic nature allows them to adapt to incoming inputs in a sequential form, working often times better than convolutional neural networks (CNN), when dealing with time-series data. Other variants of RNNs have been created, which allow them to store "memory" for future cases, with Long Short-Term Memory (LSTM) \cite{lstm1}, which were then further expanded with gates for Gated Recurrent Units (GRU) \cite{gru1} specifically to allow such units to forget information, and a visual representation of LSTMs and GRUs are shown on Figure \ref{fig::LSTM_GRU}
+The work on recurrent neural networks (RNN) was originally shown by \cite{rnn1} and \cite{rnn2}, and it finally came to be coined by \cite{rnn3}. They have shown to work very efficiently with time-series data as their cyclic nature allows them to adapt to incoming inputs in a sequential form, working often times better than convolutional neural networks (CNN), when dealing with time-series data. Other variants of RNNs have been created, which allow them to store "memory" for future cases, with Long Short-Term Memory (LSTM) \cite{lstm1}, which were then further expanded with gates for Gated Recurrent Units (GRU) \cite{gru1} specifically to allow such units to forget information, and a visual representation of LSTMs and GRUs are shown on Figure \ref{fig::LSTM_GRU}
 
 \begin{figure}[H]
 \begin{center}
@@ -226,10 +226,10 @@ Of course this solution is not guaranteed to remove every single noise source du
 \subsection{Hidden-Markov Models and Gaussian Mixture Models} \label{sec:hmm}
 A well documented work that I've found on Gaussian mixture models was \cite{GMM1}, though works on the Expectation-Maximization (EM) algorithm have been shown as early as in \cite{dudaHart1973}. Such models are often used for unsupervised clustering classification problems, where one assumes the probability distribution of different classes to follow a Gaussian. As mentioned before, it is critical that the data has compactness in order to make the assumption that the data distributions follow Gaussians, and if not, spectral clustering (see \ref{app:spectralclustering}) may be ussed for clustering problems. Nonetheless, for speech, depending on the features that one may be using, it is very safe to assume that they follow Gaussian distributions, which has led a lot of work in speech to be dependent on derivatives of Gaussian mixture models. For more detailed information on GMMs, please see \ref{app:gmm}
 
-One of the most important works for speech are the hidden Markov models (HMM), introduced by \cite{rabiner_juang_hmm} (which happens to be yet one of the best tutorials on HMMs), and shown to work greatly on speech \cite{rabiner_hmm_speech}. The Viterbi algorithm, which was first proposed in \cite{viterbi_original}, and later formalized in \cite{viterbi_algorithm}, is a great way to the solve HMM problems, via dynamic programming. Many consider HMMs to be dynamic forms of GMMs, where a single point in time of a HMMs is essentially a GMM (assuming a Gaussian distribution between the classifications), but this fails if the prior probabilities are not Gaussian. Although, most of the people in the machine learning field use GMMs for clustering classification, it was primarily created in order to create models that, when brought together, created a better representation of an unknown distribution, in the same way that boosting is used to combine different ML methods that complement each other to create a better regressor or classifier. Nonetheless, it became very common to use HMMs for speech recognition. For instance, the work from \cite{singlechannel} could not be completed if the authors did not have an HMM module to output phonemes to segment their signals in order to create dictionaries for SNMF.
+One of the most important works for speech are the hidden Markov models (HMM). They were originally introduced by \cite{rabiner_juang_hmm} (which happens to be yet one of the best tutorials on HMMs), and shown to work greatly on speech \cite{rabiner_hmm_speech}. The Viterbi algorithm, which was first proposed in \cite{viterbi_original}, and later formalized in \cite{viterbi_algorithm}, is a great way to the solve HMM problems, via dynamic programming. Many consider HMMs to be dynamic forms of GMMs, where a single point in time of a HMMs is essentially a GMM (assuming a Gaussian distribution between the classifications), but this fails if the prior probabilities are not Gaussian. Although, most of the people in the machine learning field use GMMs for clustering classification, it was primarily created in order to create models that, when brought together, created a better representation of an unknown distribution, in the same way that boosting is used to combine different ML methods that complement each other to create a better regressor or classifier. Nonetheless, it became very common to use HMMs for speech recognition. For instance, the work from \cite{singlechannel} could not be completed if the authors did not have an HMM module to output phonemes to segment their signals in order to create dictionaries for SNMF.
 
 
-\begin{figure}[h]
+\begin{figure}[ht]
 \begin{center}
     \includegraphics[width=0.28\textwidth]{"./images/HMM_simple".png}
     \includegraphics[width=0.53\textwidth]{"./images/HMM_unrolled".png}
@@ -281,27 +281,223 @@ One technique that has been considered state-of-the-art in the past few years is
 
 \subsection{Gaussian Mixture Model-Universal Background Model and Supervectors}
 
-\begin{figure}[h]
+\begin{figure}[ht]
 \begin{center}
     \includegraphics[width=0.85\textwidth]{"./images/UBM_speaker".png}
     \caption{An illustration of a speaker model and the adapted speaker model. }
-    \label{fig::ubm_speaker_model}
+    \label{fig::ubm_graphs}
 \end{center}
 \end{figure}
 
 The Gaussian Mixture Model - Universal Background Model (GMM-UBM) approach was first introduced in \cite{first_UBM}, which is a different approach to doing speaker verification. As mentioned before, GMMs are useful for classifications, but they are also good for creating complex models that cannot be easily modeled after a closed form solution. The GMM-UBM model takes advantage of that.
 
-The UBM is built on a large dataset containing the background (or world) model. In other words, it contains data about the not-the-target, and this largely comprises the other speakers. A very large GMM is trained on it, and then the final UBM is obtained. Then the speaker model is created with a GMM such that it is adapted based on the UBM model. The illustration on Figure \ref{fig::ubm_speaker_model} shows the UBM in blue and the adapted speaker model in yellow (I'm colorblind, so I'm uncertain if this is correct).
+The UBM is built on a large dataset containing the background (or world) model. In other words, it contains data about the not-the-target, and this largely comprises the other speakers. A very large GMM is trained on it, and then the final UBM is obtained. Then the speaker model is created with a GMM such that it is adapted based on the UBM model. The illustration on Figure \ref{fig::ubm_speaker_model} shows the UBM in blue and the adapted speaker model in yellow (I'm colorblind, so I'm uncertain if this is correct). Once the UBM has been formed, the speaker model may be derived from the UBM via a maximum a posteriori adaptation.
 
 \subsubsection*{Maximum A Posteriori Adaptation of the UBM}
-Let $X$ represent the acoustic feature vectors by a speaker $s$, the 
+Assume a GMM-UBM model has been created and is represented by the following equation
+$$ f(\tilde{\bm{x}}_n | \Lambda) = \sum_{g = 1}^M \pi_g \mathcal{N} (\tilde{\bm{x}}_n | \bm{mu}_g, \Sigma_g)$$
 
+where $\tilde{\bm{x}}$ represents the $n^{th}$ feature vector used for the UBM, $\pi_g$ represents the weight of the $g^{th}$ mixture component out of $M$ Gaussian components, with a mean vector $\bm{\mu}_g$ and covariance matrix $\Sigma_g$. The set of parameters for the GMM-UBM model is denoted as $\Lambda = \{ \pi_g, \mu_g, \Sigma_g | 1 \leq g \leq M \}$.
+Next let $X \in \{ \bm{x}_n | 1 \leq n \leq T\}$ represent the set of acoustic feature vectors by a speaker $s$, the first probability values $\gamma_n$ to be computed are
+$$\gamma_n (g) = Pr(g | \bm{x}_n) = \frac{\pi_g Pr(\bm{x}_n | g, \lambda_0)}{\sum_g \pi_g Pr(\bm{x}_n | g, \lambda_0)}$$
 
+These $\gamma_n(g)$ values are then used to calculate the 0th, 1st, and 2nd order Baum-Welch Statistics, shown respectively below, which represent the sufficient statistics for the weight, mean, and covariance parameters.
 
-One great advantage of using the UBM model is that it has a very nice performance, even if the speaker-dependent data is small; however, the disadvantage is that it requires a gender-balanced large speakers set in order to train it efficiently \cite{advantageUBM}.
+\begin{figure}[h]
+\begin{center}
+    \includegraphics[width=0.85\textwidth]{"./images/GMM_UBM_graphs".png}
+    \caption{An illustration of (left) the GMM-UBM models with 4 components, which lead to the UBM supervector, and (right) the speaker adapted GMM based on the UBM model and the speaker data via a MAP algorithm to create the speaker supervector.}
+    \label{fig::ubm_speaker_graph}
+\end{center}
+\end{figure}
+
+\begin{align*}
+    BW^0_s (g) &= \sum_{n=1}^T \gamma_n(g) \\
+    BW^1_s (g) &= \sum_{n=1}^T \gamma_n(g) \bm{x}_n \\
+    BW^2_s (g) &= \sum_{n=1}^T \gamma_n(g) \bm{x}_n \bm{x}_n^T
+\end{align*}
+
+Once computed, the posterior mean and covariance matrix of the features may be computed, given the data vectors $X$, shown below respectively.
+
+\begin{align*}
+    \mathbb{E}_g [\bm{x}_n | X] &= \frac{BW^1_s (g)}{BW^0_s (g)} \\
+    \mathbb{E}_g [\bm{x}_n \bm{x}^T | X] &= \frac{BW^2_s (g)}{BW^0_s (g)}
+\end{align*}
+
+Then maximum a posteriori adaptation rule equations for the weight, mean and covariance, which are used for the speaker verification are computed as follow, assuming the following definition of $\alpha_g$
+\begin{equation*}
+\begin{dcases}
+    \alpha_g = \frac{BW^0_s(g)}{BW^0_s(g) + r} \\
+    \hat{\pi}_g = \beta \left[\alpha_g \frac{BW^0_s(g)}{T} + (1-\alpha_g) \pi_g\right]  \\
+    \hat{\bm{\mu}}_g = \alpha_g \mathbb{E}_g [\bm{x}_n | X] + (1-\alpha_g) \bm{mu}_g \\
+    \hat{\Sigma}_g = \alpha_g \mathbb{E}_g [\bm{x}_n \bm{x}_n^T | X ] + (1-\alpha_g)(\Sigma_g + \bm{\mu}_g  \bm{\mu}_g^T) - \hat{\mu}_g \hat{\mu}_g^T
+\end{dcases}
+\end{equation*}
+
+The scaling factor $\beta$ is based on all of the $\hat{\pi}_g$ ensuring that they all add up to 1, and the relevance factor $r$ is a control parameter on how the adapted GMM will be affected by the observed data. It turns out that the only effective parameter are the mean vectors $\hat{\bm{\mu}}_g$.
+
+Supervectors was first coined in \cite{supervectors}, where the mean vectors $\bm{\mu}_g$ are concatenated together to create a single large vector. Therefore, for an $M$ component Gaussian mixture with $F$ features, the supervector would live on the space $\mathbb{R}^{MF\times 1}$. Figure \ref{fig::ubm_speaker_graph} shows the UBM created over the background dataset, which is used along with the speaker data to adapt it onto a speaker mean supervector. Therefore, since the models shown in Figure \ref{fig::ubm_speaker_graph} have $M=4$ components, and it is in a 2D graph (i.e. $F=2$), then the supervector for both the UBM and the speaker would live in the space $\mathbb{R}^{MF\times 1} = \mathbb{R}^{8\times 1}$, and such vectors are suitable for SVM-based speaker recognition.
+
+One great advantage of using the UBM model is that it has a very nice performance, even if the speaker-dependent data is small; however, the disadvantage is that it requires a gender-balanced large speakers set in order to train it efficiently \cite{advantageUBM}. There has been a number of ways to represent the GMM supervector for a speaker $s$, but the generalized way to do so is to write
+
+$$\bm{M}(s) = \bm{m}_0 + \bm{m}_{speaker} + \bm{m}_{channel} + \bm{m}_{residual}$$
+
+where the $\bm{m}_0$ represents a speaker/channel/environment independent component, $\bm{m}_{speaker}$ represents a speaker-dependent component, $\bm{m}_{channel}$ represents a channel-dependent component, and $\bm{m}_{residual}$ represents a residual vector.
+
+\subsection{Eigenvoices and Eigenchannel}
+The concept of eigenvoices is drawn directly from principle component analysis (PCA), where it is solely a speaker-dependent mean supervector, with, of course, a speaker-independent supervector obtained from the UBM model, where $\bm{m}_{speaker} = \bm{V}{y}_s$.
+
+$$\bm{M}(s) = \bm{m}_0 + \bm{V}{y}_s$$
+
+The matrix $\bm{V}$ spans the speaker subspace, and $\bm{y}_s$ are the speaker factors. $\bm{V}$ then represents the eigenvoice matrix, and $\bm{y}_s$ represents the weight vector. The issue is that this model assumes that all of the speaker supervectors are completely contained in the eigenvoice subspace. Therefore, this model may be extended to the expression
+
+$$\bm{M}(s) = \bm{m}_0 + \bm{V}{y}_s + \bm{D}\bm{z}_s$$
+
+where the matrix $\bm{D}$ is a diagonal matrix and $\bm{z}_s$ is a normal random vector, which are used to make the residual term $\bm{m}_{residual} = \bm{Dz}_s$. A similar model may be created, but that is dependent on the channel factors instead, where $\bm{U}$ is a low-rank matrix spanning the channel subspace, and $\bm{c}_h\sim \mathcal{N}(0,\bm{I})$ is a random vector for an utterance $h$, making $\bm{m}_{channel} = \bm{U}{c}_h$
+
+$$\bm{M}(s) = \bm{m}_0 + \bm{U}{c}_h + \bm{D}\bm{z}_s$$
 
 \subsection{Joint Factor Analysis}
+The joint factor analysis was formulated by \cite{JFA1}, where they bring the eigenvoice and eigenchannel model together into a single model. The following equation follows the same notation
+
+$$\bm{M}(s) = \bm{m}_0 + \bm{V}{y}_s + \bm{U}\bm{c}_h + \bm{D}\bm{z}_s$$
+
+In order to obtain the JFA matrices and the factor vectors, it is required to follow the following order:
+\begin{enumerate}
+    \item Train the eigenvoice matrix $\bm{V}$ assuming that the eigenchannel matrix $\bm{U}$ and the residual matrix $\bm{D}$ are zero
+    \item Train the eigenchannel matrix $\bm{U}$ given the estimated $\bm{V}$, and still assuming $\bm{D}$ is zero.
+    \item Train the residual matrix $\bm{D}$ given the estimated $\bm{V}$ and $\bm{U}$.
+    \item Using the estimated matrices, compute the factor vectors $\bm{y}_s$, $\bm{c}_h$, and $\bm{z}_s$
+\end{enumerate}
+
+\subsubsection{Training the $\bm{V}$ matrix}
+Step 1. To train the $\bm{V}$ matrix, first compute the zeroth, first, and second order sufficient statistics
+\begin{align*}
+    \gamma_n (g) &= Pr(g | \bm{x}_n) = \frac{\pi_g Pr(\bm{x}_n | g, \lambda_0)}{\sum_g \pi_g Pr(\bm{x}_n | g, \lambda_0)}\\
+    BW^0_s (g) &= \sum_{n=1}^T \gamma_n(g) \\
+    BW^1_s (g) &= \sum_{n=1}^T \gamma_n(g) \bm{x}_n \\
+    BW^2_s (g) &= diag\left(\sum_{n=1}^T \gamma_n(g) \bm{x}_n \bm{x}_n^T \right)
+\end{align*}
+
+Step 2. Center the first and second order statistics
+\begin{align*}
+    \hat{BW}^1_s (g) &= BW^1_s - BW^0_s \bm{\mu}_g \\
+    \hat{BW}^2_s (g) &= BW^2_s - diag(BW^0_s \bm{\mu}^T + \bm{\mu} (BW^1_s)^T - BW^0_s \bm{\mu}_g \bm{\mu}_g^T)
+\end{align*}
+
+Step 3. One can then expand the statistics onto matrices
+\begin{align*}
+    \bm{BW^0}_s &= \begin{bmatrix} BW^0_s(1) \cdot \bm{I} &  &  \\  & \ddots &  \\ & & BW^0_s(M) \cdot \bm{I} \end{bmatrix} \\
+    \bm{BW^1}_s &= \begin{bmatrix} \hat{BW}^1_s(1) \\ \vdots \\ \hat{BW}^1_s(M) \end{bmatrix} \\
+    \bm{BW^2}_s &= \begin{bmatrix} \hat{BW}^2_s(1) \cdot \bm{I} &  &  \\  & \ddots &  \\ & & \hat{BW}^2_s(M) \cdot \bm{I} \end{bmatrix}
+\end{align*}
+
+Step 4. Make an estimate of the speaker factor $\bm{y}_s$
+\begin{align*}
+    v_s &= I + V^T \cdot \Sigma^{-1} \cdot \bm{BW^0}_s \cdot V \\
+    &\bm{y}_s \sim \mathcal{N}(v_s^{-1} \cdot V^T \cdot \Sigma^{-1} \cdot \bm{BW^1}_s , v_s^{-1}) \\
+    &\quad \quad \rightarrow \mathbb{E}[\bm{y}_s] = v_s^{-1} \cdot V^T \cdot \Sigma^{-1} \cdot \bm{BW^1}_s
+\end{align*}
+
+Step 5. Compute statistics across the speakers
+\begin{align*}
+    BW^0(g) &= \sum_s BW^0_s \\
+    A(g) &= \sum_s BM^0_s v_s^{-1} \\
+    \mathbb{C} &= \sum_s \bm{BW^1}_s \cdot \mathbb{E}[\bm{y}_s]^T \\
+    \bm{BW^0} &= \sum_s \bm{BW^0}_s
+\end{align*}
+
+It is possible to split $\mathbb{C}$ into
+$$\mathbb{C} = \begin{bmatrix} \mathbb{C}_1 \\ \vdots \\ \mathbb{C}_M \end{bmatrix} $$
+
+Step 6. Estimate $\bm{V}$
+$$\bm{V} = \begin{bmatrix} V_1 \\ \vdots \\ V_M \end{bmatrix} = \begin{bmatrix} A^{-1}(1) \cdot \mathbb{C}_1 \\ \vdots \\  A^{-1}(M) \cdot \mathbb{C}_M  \end{bmatrix}$$
+
+Step 7. Compute the covariance update
+$$\Sigma = (\bm{BW^0})^_{-1} \left( \sum_s \bm{BW^2}_s - diag(\mathbb{C}\cdot V^T) \right)$$
+
+Step 8. Repeat steps 4-7
+
+\subsubsection{Training the $\bm{U}$ matrix}
+Because the eigenchannel matrix analyzes over the channel factors, it involves the changes between utterances.
+Step 1. Compute the the 0th and 1st order statistics of each conversation of each speaker
+\begin{align*}
+    N_{s,conv}(g) &= \sum_{n \in conv,s} \gamma_n (g) \\
+    F_{s,conv}(g) &= \sum_{n \in conv,s} \gamma_n(g) \bm{x}_n
+\end{align*}
+
+Step 2. For each speaker $s$, compute a speaker shift using $\bm{V}$ and the speaker factors $\bm{y}_s$.
+
+$$ spkshift_s = \bm{m}_0 + \bm{Vy}_s $$
+
+Step 3. Compute a speaker shifted version of the first order statistics given a Gaussian posterior weighing
+
+$$\hat{F}_{s,conv}(g) &= F_{s,conv}(g) - spkshift_s \cdot N_{s,conv}(g) $$
+
+Step 4. Expand the statistics to matrices.
+
+\begin{align*}
+    NN_{s,conv} &= \begin{bmatrix} N_{s,conv}(1) \cdot \bm{I} & & \\ & \ddots & \\ & & N_{s,conv}(M) \cdot \bm{I}  \end{bmatrix} \\
+    FF_{s,conv} &= \begin{bmatrix} \hat{F}_{s,conv}(1) \\ \vdots \\ \hat{F}_{s,conv}(M) \end{bmatrix}
+\end{align*}
+
+Step 5. Use the same methodology of training $\bm{V}$ and $\bm{y}_s$ to train $\bm{U}$ and $\bm{c}$ by using $NN_{s,conv}$ and $FF_{s,conv}$, and iterate.
+
+\subsubsection{Training the $\bm{D}$ matrix}
+Finally, to compute the residual matrix,
+
+Step 1. For each speaker $s$, compute the speaker shift using $\bm{V}$ and the speaker factors $\bm{y}_s$
+$$ spkshift_s = \bm{m}_0 + \bm{Vy}_s $$
+
+Step 2. For each conversation side $conv$ of the speaker $s$, compute the channel shift using $\bm{U}$ and $\bm{z}$
+$$channelshift_{s,conv} = \bm{Uc}_{s,conv} $$
+
+Step 3. For each speaker that is being used for the JFA training, subtract the Gaussian posterior weighed speaker shift and the channel shifts from the first order statistics.
+
+$$\hat{F}_(g) = F_s(g) - spkshift_s \cdot N_s(g) - \sum_{conv \in s} channelshift_{s,conv} \cdot N_{s,conv}(g)$$
+
+Step 4. Expand the statistics to matrices.
+
+\begin{align*}
+    NN_{s,conv} &= \begin{bmatrix} N_{s,conv}(1) \cdot \bm{I} & & \\ & \ddots & \\ & & N_{s,conv}(M) \cdot \bm{I}  \end{bmatrix} \\
+    FF_{s,conv} &= \begin{bmatrix} \hat{F}_{s,conv}(1) \\ \vdots \\ \hat{F}_{s,conv}(M) \end{bmatrix}
+\end{align*}
+
+Step 5. Estimate the residual factors $\bm{z}$
+\begin{align*}
+    d_s &= \bm{I} + \bm{D}^2 \cdot \Sigma^{-1} \cdot NN_s \\
+    &\bm{z}_s \sim \mathcal{N}(d^{-1}_s \cdot D \cdot \Sigma^{-1} \cdot FF_s , d^{-1}_s) \\
+    &\quad \quad \mathbb{E}[\bm{z}_s] = d^{-1}_s \cdot \bm{D} \cdot \Sigma^{-1} \cdot FF_s
+\end{align*}
+
+Step 6. Obtain more statistics across the speakers
+
+\begin{align*}
+    N(g) &= \sum_s N_s (g) \\
+    a &= \sum_s diag(NN_s \cdot d^{-1}_s) \\
+    b &= \sum_s diag(FF_s \cdot \mathbb{E}[\bm{z}_s]) \\
+    NN &= \sum_s NN_s
+\end{align*}
+
+Step 7. Compute the $\bm{D}$ estimate
+$$\bm{D} = \begin{bmatrix} D_1 \\ \vdots \\ D_M \end{bmatrix} = \begin{bmatrix} a^{-1}(1) \cdot b_1 \\ \vdots \\  a^{-1}(M) \cdot b_M  \end{bmatrix} \text{ where } b = \begin{bmatrix} b_1 \\ \vdots \\ b_M\end{bmatrix}$$
+
+Step 8. Iterate steps 5-7
+
 \subsection{$i$-vectors}
+The identity-vectors (i-vectors) were created by \cite{ivec}, which follows the works on JFA. The methods for JFA were very promising as they were shown to contain information about speakers, and to work very well in other speech tasks such as language recognition, meaning that it had the power to group different languages. A recent work has shown that i-vectors are able to identify the native language of a speaker speaking a second language, indicating that they are capable of capturing information about the accents of an individual \cite{ivec_nativelang}. The motivation was that experiments showed that channel factors also contain speaker-dependent information. Therefore, in the i-vector methodology, speaker and channel factors were combined into a single matrix called the total variability matrix $\bm{T}$, which works in conjunction with the i-vector $w_{s}$. Therefore the speaker and session dependent GMM can be represented by
+
+$$\bm{M}_s = \bm{m}_0 + \bm{Tw}_s$$
+
+The hidden variables in the i-vector are called the total factors, such that $\bm{w}_s \sim \mathcal{N}(\bm{0,I})$. Although the hidden variables are not observable, they can be estimated via their posterior expectation. In many sense, this methodology is very similar to the PCA model, and the $\bm{T}$ matrix is trained using the same algorithms as for the JFA model, however each utterance is treated as if they were obtained from a different speaker.
+
+In order to obtain the i-vectors:
+\begin{enumerate}
+    \item Run the exact training procedure used to train the $\bm{V}$, while treating the conversations of all training speakers as to belong to different speakers. 
+    \item With a given $\bm{T}$, compute i-vectors for each conversation side.
+    \item For the channel compensation, perform a linear discriminant analysis, followed by a within-class covariance normalization
+    \item Perform a cosine distance scoring o the channel-compensated i-vectors for a pair of conversation sides
+\end{enumerate}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Features from Speech}
