@@ -414,7 +414,7 @@ Step 6. Estimate $\bm{V}$
 $$\bm{V} = \begin{bmatrix} V_1 \\ \vdots \\ V_M \end{bmatrix} = \begin{bmatrix} A^{-1}(1) \cdot \mathbb{C}_1 \\ \vdots \\  A^{-1}(M) \cdot \mathbb{C}_M  \end{bmatrix}$$
 
 Step 7. Compute the covariance update
-$$\Sigma = (\bm{BW^0})^_{-1} \left( \sum_s \bm{BW^2}_s - diag(\mathbb{C}\cdot V^T) \right)$$
+$$\Sigma = (\bm{BW^0})^{-1} \left( \sum_s \bm{BW^2}_s - diag(\mathbb{C}\cdot V^T) \right)$$
 
 Step 8. Repeat steps 4-7
 
@@ -432,7 +432,7 @@ $$ spkshift_s = \bm{m}_0 + \bm{Vy}_s $$
 
 Step 3. Compute a speaker shifted version of the first order statistics given a Gaussian posterior weighing
 
-$$\hat{F}_{s,conv}(g) &= F_{s,conv}(g) - spkshift_s \cdot N_{s,conv}(g) $$
+$$\hat{F}_{s,conv}(g) = F_{s,conv}(g) - spkshift_s \cdot N_{s,conv}(g) $$
 
 Step 4. Expand the statistics to matrices.
 
@@ -493,7 +493,7 @@ The hidden variables in the i-vector are called the total factors, such that $\b
 
 In order to obtain the i-vectors:
 \begin{enumerate}
-    \item Run the exact training procedure used to train the $\bm{V}$, while treating the conversations of all training speakers as to belong to different speakers. 
+    \item Run the exact training procedure used to train the $\bm{V}$, while treating the conversations of all training speakers as to belong to different speakers.
     \item With a given $\bm{T}$, compute i-vectors for each conversation side.
     \item For the channel compensation, perform a linear discriminant analysis, followed by a within-class covariance normalization
     \item Perform a cosine distance scoring o the channel-compensated i-vectors for a pair of conversation sides

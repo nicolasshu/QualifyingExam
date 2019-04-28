@@ -1,11 +1,180 @@
 \chapter{Deep Learning Theory}
-\cite{blackbox} \cite{deeprelaxation} \cite{meanfield}
+
+Although the field of deep learning has been growing at an incredibly fast rate, there is still a lot of notions in deep learning that remains not understood. Because it is rather simple to implement and it doesn't require a lot of ingenuity to design a new architecture, a lot of empirical advancements have been published. However, because of the nature of the field, and a bad selection of reviewers for publications/conferences*, there isn't a lot of fundamental understanding of what is happening with deep learning. This becomes extremely crucial for healthcare, as the nature of that field requires a complete understanding of the reasoning behind diagnostic in order to diagnose a patient. Although DL is very powerful and it is able to approach functions with a very high degree of complexity, they are unable to enter the field of healthcare due to the lack of understanding. In other words, how would a patient respond if the hospital provided a diagnose of a deadly disease/disorder, and when asked why, the response would be: "Because the deep neural network with $X$ accuracy said so." In this chapter, four different approaches are described in each section attempting to provide a better understanding of deep learning.
+
+* \textit{It occurred last semester that one of our collegues (a PhD student) in Georgia Tech was invited to review papers for NIPS because he had a few publications in deep learning. He was in fact stressed about it and asking for help as he had never reviewed any publications before, and he was uncertain how to do so.}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Deep Relaxation: PDEs for Optimizing Deep Neural Networks}
+\section{The Stochastic Thermodynamics of Learning \cite{thermo}}
+The first field that is described follows the field of thermodynamics and a little bit of information theory. Note that, although showing the work from \cite{thermo}, I am changing some of the notations to a set of notations that is a bit more familiar.
+
+First, modeling a neuron, let a neuron make $N$ connections to ther neurons, which is fully characterized by $\bm{w} \in \mathbb{R}^N$, and it must learn whether or not to fire an action potential from a set of $P$ different examples $\bm{x}^p = \{ (x_1^p,x_2^p,\cdots,x_N^p) | 1\leq p \leq P \}$ (i.e. patterns), which describe the activity of all other connected neurons, and say that $x^p_n \in \{ -1, 1\}$, which represents the $n^{th}$ feature (i.e. the active/inactive state coming from the $n^{th}$ neuron) of the $p^{th}$ observation. The observations $\bm{x}^p$ are paired with a ground truth label $y^p \in \{-1,1\}$, and the neuron tries to predict a label $\hat{y}^p \in \{-1,1\}$ such that it equates the true label $y^p$. The neuron may be modeled as a thermal environment with the transition rates as $k_p^\pm$ for the equilibrium between the states -1 and +1. The equilibrium process can be modeled as the following, where $\mathcal{A}^p$ is the input-dependent function, $k_B$ is the Boltzmann's constant, and $T_{temp}$ represents a fixed temperature.
+
+\begin{align*}
+  \frac{k_p^+}{k_p^-} &= \exp\left(\frac{\mathcal{A}^p}{k_B T_{temp}} \right) \\
+  \mathcal{A}^p &= \frac{\bm{w} \cdot \bm{x}^p}{\sqrt{N}}
+\end{align*}
+
+\begin{figure}[h]
+\begin{center}
+    \includegraphics[width=0.6\textwidth]{"./images/neuron_model".png}
+    \caption{The model of a neuron, where the $p^{th}$ input-target pair is used to compute $\mathcal{A}^p$, which then is used to compute the transition rates ratio between the two labels $\{-1,+1\}$}
+    \label{fig::model_neuron}
+\end{center}
+\end{figure}
+
+This work presents the concept of \textit{learning efficiency}, but first, a few concepts need to be established. In such case, for simplicity, set $k_B = T = 1$ in order to render the energy and entropy dimensionless. Considering a network with one weight, one sample, and one label ($N=P=1$), the weight $w$ is assumed to follow the overdamped Langevin equation
+
+$$ \frac{dw(t)}{dt} = - w(t) + f(w(t) , \bm{x}, y, t) + \zeta(t) $$
+
+\begin{itemize}
+    \item $f(\cdot) =$ external force, which depents on the learning algorithm chosen. It creates the correlation between the weight $w$ and the input $\bm{x}$
+    \item $\zeta (t) = $ Gaussian thermal noise, such that the correlation $\langle \zeta(t)\zeta(t') \rangle = 2 \delta(t-t')$
+\end{itemize}
+
+By setting the initial conditions occurring at $t=t_0 = 0$, the weight is in thermal equilibrium (i.e. $Pr(w) \propto e^{-\frac{w^2}{2}}$), and the labels are equiprobable (i.e. $Pr(y) = Pr(\hat{y}) = 0.5)$. With symmetric rates,
+\begin{align*}
+    k_\pm &= \gamma e^{frac{A}{2}} \\
+    \frac{k_+}{k_-} = \frac{\gamma \exp{\frac{A}{2k_B T_{temp}}}  }{\gamma \exp{-\frac{A}{2k_B T_{temp}}} } = \exp{\frac{A}{2k_B T_{temp}}} \gamma \exp{\frac{A}{2k_B T_{temp}}} = \gamma \exp{\frac{A}{k_B T_{temp}}}
+\end{align*}
+
+Therefore, the partial differential equation for the joint probability distribution $Pr(y,w,\hat{y},t)$ is defined as
+\begin{equation*}
+\begin{dcases}
+    \frac{\partial Pr(y,w,\hat{y},t)}{\partial t} = - \frac{\partial j_w (t)}{\partial w} + j_{\hat{y}}(t) \\
+    j_w(t) = \left[ -w + f(w,\bm{x},y,t) - \frac{\partial}{\partial w}\right] Pr(y,w,\hat{y}, t) & = \text{Probability current for weight}\\
+    j_{\hat{y}}(t) = k_{\hat{y}} Pr(y,w,\hat{y},t) - k_{-\hat{y}} Pr(y,w,\hat{y},t) & = \text{Probability current for the predicted label}
+\end{dcases}
+\end{equation*}
+
+Per definition, a probability current (i.e. probability flux) is the mathematical quantity describing the flow of probability in terms of probability per unit time. It is quite similar to if one was to describe the probability density as a fluid, and the probability current is the rate of flow of the fluid.
+
+\subsection{Learning Efficiency}
+To measure the learning efficiency, one must first define the Shannon entropy $S(X)$ of a random variable $X$, the conditional entropy of $X$ given $Y$, $S(X|Y)$ and the mutual information $I(y:\hat{y})$
+
+\begin{equation*}
+\begin{dcases}
+    S(Y) = -\sum_{y \in Y} Pr(y) \log(Pr(y)) \\
+    S(Y|\hat{Y}) = - \sum_{y,\hat{y}} Pr(y,\hat{y}) \log(Pr(y|\hat{y})) = - \sum_{y,\hat{y}} Pr(y,\hat{y}) \log \left( \frac{Pr(y,\hat{y})}{Pr(\hat{y})}\right) \\
+    I(y:\hat{y}) = S(y) - S(y|\hat{y})
+\end{dcases}
+\end{equation*}
+
+The $S(Y)$ measures the uncertainty of $Y$, and the mutual information is a natural quantity which measures the information learned. In other words, it measures the different between the uncertainty of the true label $y$ and the uncertainty of the true label $y$ given $\hat{y}$. It is then possible to measure the mutual information $I(y:\hat{y})$ to the thermodynamic costs of adjusting the weight from time $t_0$ to time $t$, with the total entropy production.
+
+\begin{equation*}
+    \begin{dcases}
+        \Delta S_w^{tot} = \Delta S(w) - \Delta Q  \\
+        \Delta S(w) = \text{difference of Shannon entropy of } P(w,t) = \sum_{y,\hat{y}} Pr(y,w,\hat{y},t)\text{ from time $t_0$ to $t$} \\
+        \Delta Q = \text{heat dissipated into the medium by the dynamics of the weight}
+    \end{dcases}
+\end{equation*}
+
+Their work show that the thermodynamic costs of learning in fact bound the information learned with
+$$I(y:\hat{y}) \leq \Delta S(w) + \Delta Q$$
+
+for any arbitrary algorithm $f(w,\bm{x},y,t)$ at all times $t > t_0$. This is important because they relate the entropy production in the weights with the change in mutual information between $y$ and $\hat{y}$. Therefore, one may define \textit{learning efficiency} $\eta$ as
+
+$$ \eta = \frac{I(y,\hat{y})}{\Delta S(w) + \Delta Q} \leq 1$$
+
+In a toy problem, they formulate the learning efficiency of a Hebbian learning, where $N=P=1$ as $t\rightarrow \infty$. This makes $\bm{x} = x$ as a single input. The Hebbian learning formulation can be described as
+
+$$w_{ij}(t+1) = w_{ij}(t) + \nu x_i(t) x_j(t)$$
+
+where $\nu$ is the learning rate coefficient, and $x$ are the outputs of the $i^{th}$ and $j^{th}$ coefficient. Thus, for a neuron, when the input neuron fires, then the following neuron should fire,and the weight of their connection increases. If the following neuron has a response that differs from the input neuron, then the connection decreases. This means that $x = y = \pm 1$. Therefore, this yields a final weight that is proportional to the $\mathcal{F}$ which is defined as $\mathcal{F} = y x$. Then they choose a learning force $f$ that linearly increases with time
+
+\begin{equation*}
+f(w,x,y,t) = \begin{dcases}
+\frac{\nu \mathcal{F}}{\tau} = \frac{\nu y x}{\tau} & t \leq \tau \\
+\nu \mathcal{F} = \nu y x  & t \leq \tau
+\end{dcases}
+\end{equation*}
+
+where $\tau > 0$ represents the learning duration and $\nu > 0$ represents the learning rate in machine learning. One can compute the total entropy loss $\Delta S_w ^{tot}$, by computing $Pr(y,w,t)$ and $\Delta Q$. To compute $Pr(y,w,t)$, one should
+\begin{enumerate}
+    \item Integrate $\hat{y}$ out of $\frac{\partial}{\partial t} Pr(y,w,\hat{y},t) = -\frac{\partial}{\partial w} j_w(t) + j_{\hat{y}}(t)$, which yields a Fokker-Planck equation
+    \item Solve the Fokker-Planck equation to obtain $Pr(y,w,t)$
+\end{enumerate}
+
+In order to calculate $\Delta Q$, where $f = f(w(t), x, y, t)$, it is computed as
+
+$$\Delta Q = \int_0^\infty dt \int_{-\infty}^\infty dw j_w(t) [-w(t) + f] = \frac{\nu^2 \mathcal{F} (e^{-\tau}+\tau - 1)}{\tau^2}$$
+
+IF the learning duration is too long, no heat is dissipated, but if the learning duration is too sudden, then it the following solutions are
+\begin{equation*}
+\begin{dcases}
+    \lim_{\tau \rightarrow \infty} \Delta Q = 0 \\
+    \lim_{\tau \rightarrow 0} \Delta Q = \frac{\nu^2 \mathcal{F}^2}{2}
+\end{dcases}
+\end{equation*}
+
+Then the Shannon entropy $\Delta S(w)$ can be computed from the marginal probability $Pr(w,t) = \sum_y Pr(y,w,t)$ which was obtained while computing $\Delta S_w^{tot}$. The stationary solution of a differential equation is defined as when $\frac{\partial \hat{f}}{\partial t}$ is zero, and the solution to the stationary solution of
+
+$$\frac{\partial Pr(y,w,\hat{y},t)}{\partial t} = - \frac{\partial j_w (t)}{\partial w} + j_{\hat{y}}(t) = 0$$
+
+yields the mutual information $I(y:\hat{y})$. This then is enough to create the plot shown in Figure \ref{fig::learning_efficiency}
+
+\begin{figure}[h]
+\begin{center}
+    \includegraphics[width=0.4\textwidth]{"./images/learning_efficiency_graph".png}
+    \caption{The learning efficiency profile with varying learning duration $\tau$ and varying learning rate $\nu$, with a Hebbian learning problem}
+    \label{fig::learning_efficiency}
+\end{center}
+\end{figure}
+
+This however is not a very feasible profile for any learning algorithm. In other words, to set the learning rate to as high as possible may not always work in factor to the optimization problem.
+
+By extending this problem to a multidimentional problem, some of the formulation changes a little bit. A typical neuron usually connects to 1000 other neurons ($N\neq 1$), and it has multiple samples (i.e. $P\neq 1$). Therefore, with $\hat{\bm{y}} \in \mathbb{R}^{P}$, having the initial conditions at $t_0$ yield equiprobable results (i.e. $Pr(y) = Pr(\hat{y}) = 0.5$), the quantity that describes the amount of learning after a time $t$ has to be the sum of mutual information $I(y:\hat{y})$ over all inputs. They show that the information is bounded by the total entropy production for all of the weights
+
+$$\sum_{p=1}^P I(y^p,\hat{y}^p) \leq \sum_{n=1}^N \Delta S(w_n) + \Delta Q_n $$
+
+They set the problem by letting $P$ samples and $N$ dimensions go to infinity while keeping a ratio $\alpha = P/N$ on the order of 1, by setting a learning force the same as before, but substituting $\mathcal{F}$ with $\mathcal{F}_n$, such that
+
+$$\mathcal{F}_n = \frac{1}{\sqrt{N}} \sum_{p=1}^P x^p_n y^p $$
+
+By averaging over the noise with fixed $\bm{y}$, $w_n$ is normally distributed with mean $\langle w_n \rangle = \nu \mathcal{F}_n$, and variance 1. By averaging with respect to the quenched disorder $\bm{y}$, $\mathcal{F}_n$ is normally distrubed with $\bar{\mathcal{F}_n} = 0$, $\bar{\mathcal{F}_n^2} = \alpha$, yielding $\bar{\langle w_n \rangle} = 0$ and $\bar{\langle w_n^2 \rangle} = \log(1+ \alpha \nu^2)$. Therefore,
+
+$$\Delta S (w) = \log(1+\alpha \nu ^2)$$
+
+From here, the heat dissipated by the $n^{th}$ weight $\bar{\Delta Q_n}$ is obtained by averaging
+$$\Delta Q = \frac{\nu^2 \mathcal{F}^2 ( e^{-\tau} + \tau - 1 )}{\tau ^2}$$
+ over $\mathcal{F} \rightarrow \mathcal{F}_n$. The mutual information $I(y^p:\hat{y}^p)$ is a functional of the marginalized distribution $Pr(y^p,\hat{y}^p)$, which can be found with
+
+\begin{equation*}
+\begin{dcases}
+I(y^p:\hat{y}^p) = \log(2) - S[Pr(y^p = \hat{y}^p)] \\
+S[p] = -p \log(p) - (1-p) \log(1-p)
+Pr(y^p = \hat{y}^p) = \int_{-\infty}^\infty d\Delta^p Pr(\Delta^p) \frac{e^{\Delta^p}}{e^{\Delta^p} + 1} \\
+\Delta^p = \frac{1}{\sqrt{N}} \bm{w} \cdot \bm{x}^p y^p = \bm{\mathcal{A}}^p y^p
+\end{dcases}
+\end{equation*}
+
+This can be used to compute the Hebbian learning efficiency $\tilde{\eta}$ as
+
+$$\tilde{\eta} = \alpha \frac{I(y^p:\hat{y}^p)}{\Delta S(w_n) + \bar{\Delta Q_n}}$$
+
+Hence, if a Monte-Carlo integration of $Pr(\bm{y},\bm{w},\hat{\bm{y}})$ with $N=10,000$, one obtains the following graphs.
+\begin{figure}[h]
+\begin{center}
+    \includegraphics[width=0.6\textwidth]{"./images/learning_efficiency_graph2".png}
+    \caption{The mutual information profile with varying learning rates $\nu$ on with a Hebbian learning problem. The inset graph shows the learning efficiency $\tilde{\eta}$ in the limits $\tau \rightarrow 0$ (solid) and $\tau \rightarrow \infty$ (dashed)}
+    \label{fig::learning_efficiency}
+\end{center}
+\end{figure}
+
+It is important to note that as $P$ increases, the mutual information decreases because of hte thermal noise in the system, and the well-known failure ofHebbian learning to use information in the samples perfectly. In both plots, $\nu$ increases from bottom to top.
+
+This paper was
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Characterization of Neural Networks as an Encoder-Decoder with Mutual Information}
+\section{Deep Relaxation: PDEs for Optimizing Deep Neural Networks \cite{deeprelaxation}}
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{The Stochastic Thermodynamics of Learning}
+\section{Characterization of Neural Networks as an Encoder-Decoder with Mutual Information \cite{blackbox}}
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Residual Networks as a Mean-Field Optimal Control Problem}
+\section{Residual Networks as a Mean-Field Optimal Control Problem \cite{meanfield}}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Future}

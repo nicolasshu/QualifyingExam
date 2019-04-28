@@ -11,6 +11,12 @@ Barak, A.~P. (1988).
 \newblock Learning state space trajectories in recurrent neural networks.
 \newblock {\em Neural Computation}, 1:263--269.
 
+\bibitem[Chaudhari et~al., 2018]{deeprelaxation}
+Chaudhari, P., Oberman, A., Osher, S., Soatto, S., and Carlier, G. (2018).
+\newblock Deep relaxation: partial differential equations for optimizing deep
+  neural networks.
+\newblock {\em Research in the Mathematical Sciences}, 5(3):30.
+
 \bibitem[Cleeremans et~al., 1989]{rnn3}
 Cleeremans, A., Servan-Schreiber, D., and McClelland, J.~L. (1989).
 \newblock Finite-state automata and simple recurrent networks.
@@ -27,6 +33,11 @@ Cleeremans, A., Servan-Schreiber, D., and McClelland, J.~L. (1989).
 Duda, R.~O. and Hart, P.~E. (1973).
 \newblock {\em Pattern Classification and Scene Analysis}.
 \newblock John Willey \& Sons, New Yotk.
+
+\bibitem[E et~al., 2018]{meanfield}
+E, W., Han, J., and Li, Q. (2018).
+\newblock A mean-field optimal control formulation of deep learning.
+\newblock {\em Research in the Mathematical Sciences}, 6(1):10.
 
 \bibitem[{Eggert} and {Korner}, 2004]{sparsenmf}
 {Eggert}, J. and {Korner}, E. (2004).
@@ -55,6 +66,11 @@ Fowler, G. (2018).
 Gers, F.~A., Schmidhuber, J., and Cummins, F.~A. (2000).
 \newblock Learning to forget: Continual prediction with lstm.
 \newblock {\em Neural Computation}, 12:2451--2471.
+
+\bibitem[Goldt and Seifert, 2017]{thermo}
+Goldt, S. and Seifert, U. (2017).
+\newblock Stochastic thermodynamics of learning.
+\newblock {\em Phys. Rev. Lett.}, 118:010601.
 
 \bibitem[Graves and Jaitly, 2014]{ASR_RNN_end2end}
 Graves, A. and Jaitly, N. (2014).
@@ -161,6 +177,10 @@ Schmidt, M.~N. and Olsson, R.~K. (2006).
 Senoussaoui, M., Cardinal, P., Dehak, N., and Koerich, A.~L. (2016).
 \newblock Native language detection using the i-vector framework.
 \newblock In {\em INTERSPEECH}.
+
+\bibitem[Shwartz-Ziv and Tishby, 2017]{blackbox}
+Shwartz-Ziv, R. and Tishby, N. (2017).
+\newblock Opening the black box of deep neural networks via information.
 
 \bibitem[Tiwari and Lotia, 2012]{advantageUBM}
 Tiwari, M.~S. and Lotia, P. (2012).

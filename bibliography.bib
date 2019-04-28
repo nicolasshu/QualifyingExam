@@ -27,31 +27,44 @@
 }
 
 @article{deeprelaxation,
-    author = "Pratik Chaudhari and Adam Oberman and Stanley Osher and Stefano Soatto and Guillaume Carlier",
-    title = "Deep Relaxation: Partial Differential Equations for Optimizing Deep Neural Networks",
-    DOI = "https://doi.org/10.1007/s40687-018-0148-y",
-    year = "2018",
-    journal = "Research in the  Mathematical Sciences",
-    volume = "5",
-    number = "30"
-    }
+    author="Chaudhari, Pratik
+    and Oberman, Adam
+    and Osher, Stanley
+    and Soatto, Stefano
+    and Carlier, Guillaume",
+    title="Deep relaxation: partial differential equations for optimizing deep neural networks",
+    journal="Research in the Mathematical Sciences",
+    year="2018",
+    month="Jun",
+    day="28",
+    volume="5",
+    number="3",
+    pages="30",
+    abstract="Entropy-SGD is a first-order optimization method which has been used successfully to train deep neural networks. This algorithm, which was motivated by statistical physics, is now interpreted as gradient descent on a modified loss function. The modified, or relaxed, loss function is the solution of a viscous Hamilton--Jacobi partial differential equation (PDE). Experimental results on modern, high-dimensional neural networks demonstrate that the algorithm converges faster than the benchmark stochastic gradient descent (SGD). Well-established PDE regularity results allow us to analyze the geometry of the relaxed energy landscape, confirming empirical evidence. Stochastic homogenization theory allows us to better understand the convergence of the algorithm. A stochastic control interpretation is used to prove that a modified algorithm converges faster than SGD in expectation.",
+    issn="2197-9847",
+    doi="10.1007/s40687-018-0148-y",
+    url="https://doi.org/10.1007/s40687-018-0148-y"
+}
 
-@article{thermo,
-    author = {Sebastian Goldt and Udo Seifert},
-    title = "Stochastic Thermodynamics of Learning",
-    DOI = "https://doi.org/10.1103/PhysRevLett.118.010601",
-    year = "2017",
-    journal = "Physical Review Letters",
-    volume = "118",
-    }
+
 
 @article{meanfield,
-    title = "A Mean-Field Optimal Control Formulation of Deep Learning",
-    author = "Weinan E and Jiequn Han and Qianxial Li",
-    year = "2018",
-    url = "arXiv:1807.01083 "
-    }
-
+    author="E, Weinan
+    and Han, Jiequn
+    and Li, Qianxiao",
+    title="A mean-field optimal control formulation of deep learning",
+    journal="Research in the Mathematical Sciences",
+    year="2018",
+    month="Dec",
+    day="13",
+    volume="6",
+    number="1",
+    pages="10",
+    abstract="Recent work linking deep neural networks and dynamical systems opened up new avenues to analyze deep learning. In particular, it is observed that new insights can be obtained by recasting deep learning as an optimal control problem on difference or differential equations. However, the mathematical aspects of such a formulation have not been systematically explored. This paper introduces the mathematical formulation of the population risk minimization problem in deep learning as a mean-field optimal control problem. Mirroring the development of classical optimal control, we state and prove optimality conditions of both the Hamilton--Jacobi--Bellman type and the Pontryagin type. These mean-field results reflect the probabilistic nature of the learning problem. In addition, by appealing to the mean-field Pontryagin's maximum principle, we establish some quantitative relationships between population and empirical learning problems. This serves to establish a mathematical foundation for investigating the algorithmic and theoretical connections between optimal control and deep learning.",
+    issn="2197-9847",
+    doi="10.1007/s40687-018-0172-y",
+    url="https://doi.org/10.1007/s40687-018-0172-y"
+}
 @article{voicerecog_history,
     title = "The machines that learned to listen",
     author = "Katia Moskvitch",
@@ -416,4 +429,18 @@
   author={Mohammed Senoussaoui and Patrick Cardinal and Najim Dehak and Alessandro L. Koerich},
   booktitle={INTERSPEECH},
   year={2016}
+}
+@article{thermo,
+    title = {Stochastic Thermodynamics of Learning},
+    author = {Goldt, Sebastian and Seifert, Udo},
+    journal = {Phys. Rev. Lett.},
+    volume = {118},
+    issue = {1},
+    pages = {010601},
+    numpages = {5},
+    year = {2017},
+    month = {Jan},
+    publisher = {American Physical Society},
+    doi = {10.1103/PhysRevLett.118.010601},
+    url = {https://link.aps.org/doi/10.1103/PhysRevLett.118.010601}
 }
