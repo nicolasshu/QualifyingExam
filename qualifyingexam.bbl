@@ -1,44 +1,10 @@
 \begin{thebibliography}{}
 
-\bibitem[Anttila et~al., 1995]{pmf_chem}
-Anttila, P., Paatero, P., Tapper, U., and Järvinen, O. (1995).
-\newblock Source identification of bulk wet deposition in finland by positive
-  matrix factorization.
-\newblock {\em Atmospheric Environment}, 29(14):1705 -- 1718.
-
-\bibitem[Barak, 1988]{rnn2}
-Barak, A.~P. (1988).
-\newblock Learning state space trajectories in recurrent neural networks.
-\newblock {\em Neural Computation}, 1:263--269.
-
-\bibitem[Chaudhari et~al., 2017]{entropySGD}
-Chaudhari, P., Choromanska, A., Soatto, S., LeCun, Y., Baldassi, C., Borgs, C.,
-  Chayes, J., Sagun, L., and Zecchina, R. (2017).
-\newblock Entropy-sgd: Biasing gradient descent into wide valleys.
-\newblock In {\em International Conference on Learning Representations (ICLR)}.
-
 \bibitem[Chaudhari et~al., 2018]{deeprelaxation}
 Chaudhari, P., Oberman, A., Osher, S., Soatto, S., and Carlier, G. (2018).
-\newblock Deep relaxation: partial differential equations for optimizing deep
+\newblock Deep relaxation: Partial differential equations for optimizing deep
   neural networks.
 \newblock {\em Research in the Mathematical Sciences}, 5(3):30.
-
-\bibitem[Cleeremans et~al., 1989]{rnn3}
-Cleeremans, A., Servan-Schreiber, D., and McClelland, J.~L. (1989).
-\newblock Finite-state automata and simple recurrent networks.
-\newblock {\em Neural Computation}, 1(3):372--381.
-
-\bibitem[{Dehak} et~al., 2011]{ivec}
-{Dehak}, N., {Kenny}, P.~J., {Dehak}, R., {Dumouchel}, P., and {Ouellet}, P.
-  (2011).
-\newblock Front-end factor analysis for speaker verification.
-\newblock {\em IEEE Transactions on Audio, Speech, and Language Processing},
-  19(4):788--798.
-
-\bibitem[Duda and Hart, 1973]{dudaHart1973}
-Duda, R.~O. and Hart, P.~E. (1973).
-\newblock {\em Pattern Classification and Scene Analysis}.
-\newblock John Willey \& Sons, New Yotk.
 
 \bibitem[E et~al., 2018]{meanfield}
 E, W., Han, J., and Li, Q. (2018).
@@ -47,87 +13,26 @@ E, W., Han, J., and Li, Q. (2018).
 
 \bibitem[{Eggert} and {Korner}, 2004]{sparsenmf}
 {Eggert}, J. and {Korner}, E. (2004).
-\newblock Sparse coding and nmf.
+\newblock Sparse coding and {NMF}.
 \newblock In {\em 2004 IEEE International Joint Conference on Neural Networks
   (IEEE Cat. No.04CH37541)}, volume~4, pages 2529--2533 vol.4.
 
-\bibitem[Figueiredo and Jain, 2002]{GMM1}
-Figueiredo, M. A.~T. and Jain, A.~K. (2002).
-\newblock Unsupervised learning of finite mixture models.
-\newblock {\em IEEE Transactions on Pattern Analysis and Machine Intelligence},
-  24(3):381--396.
-
-\bibitem[{Forney}, 1973]{viterbi_algorithm}
-{Forney}, G.~D. (1973).
-\newblock The viterbi algorithm.
-\newblock {\em Proceedings of the IEEE}, 61(3):268--278.
-
 \bibitem[Fowler, 2018]{asr_at_home}
 Fowler, G. (2018).
-\newblock I live with alexa, google assistant and siri. here's which one you
-  should pick.
+\newblock I live with {A}lexa, {G}oogle {A}ssistant and {S}iri. here's which
+  one you should pick.
 \newblock {\em The Washington Post: The Switch Review}.
-
-\bibitem[Gers et~al., 2000]{gru1}
-Gers, F.~A., Schmidhuber, J., and Cummins, F.~A. (2000).
-\newblock Learning to forget: Continual prediction with lstm.
-\newblock {\em Neural Computation}, 12:2451--2471.
 
 \bibitem[Goldt and Seifert, 2017]{thermo}
 Goldt, S. and Seifert, U. (2017).
 \newblock Stochastic thermodynamics of learning.
 \newblock {\em Phys. Rev. Lett.}, 118:010601.
 
-\bibitem[Graves and Jaitly, 2014]{ASR_RNN_end2end}
-Graves, A. and Jaitly, N. (2014).
-\newblock Towards end-to-end speech recognition with recurrent neural networks.
-\newblock In {\em Proceedings of the 31st International Conference on
-  International Conference on Machine Learning - Volume 32}, ICML'14, pages
-  II--1764--II--1772. JMLR.org.
-
-\bibitem[Graves et~al., 2013]{ASR_RNN}
-Graves, A., Mohamed, A., and Hinton, G.~E. (2013).
-\newblock Speech recognition with deep recurrent neural networks.
-\newblock {\em CoRR}, abs/1303.5778.
-
-\bibitem[Han et~al., 2018]{ASR_LSTM}
-Han, K.~J., Chandrashekaran, A., Kim, J., and Lane, I.~R. (2018).
-\newblock The {CAPIO} 2017 conversational speech recognition system.
-\newblock {\em CoRR}, abs/1801.00059.
-
-\bibitem[Hochreiter and Schmidhuber, 1997]{lstm1}
-Hochreiter, S. and Schmidhuber, J. (1997).
-\newblock Long short-term memory.
-\newblock {\em Neural Computation}, 9(8):1735--1780.
-
-\bibitem[Jean-Marc et~al., 2017]{rrnoise}
-Jean-Marc, Xiph.Org, and Mozilla (2017).
-\newblock Rrnoise.
-
-\bibitem[Jordan, 1986]{rnn1}
-Jordan, M.~I. (1986).
-\newblock Attractor dynamics and parallelism in a connectionist seuential
-  machine.
-\newblock {\em Cognitive Science Conference}, pages 531--546.
-
 \bibitem[Kenny, 2005]{JFA1}
 Kenny, P. (2005).
 \newblock Joint factor analysis of speaker and session variability: Theory and
   algorithms.
 \newblock Technical report.
-
-\bibitem[Kuhn et~al., 1998]{supervectors}
-Kuhn, R., Nguyen, P., Junqua, J.-C., Goldwasser, L., Niedzielski, N., Fincke,
-  S., and Contolini, M. (1998).
-\newblock Eigenvoices for speaker adaptation.
-\newblock In {\em {ICSLP} 1998, 5th {I}nternational {C}onference on {S}poken
-  {L}anguage {P}rocessing, 30 {N}ovember-4 {D}ecember 1998, {S}ydney,
-  {A}ustralia}, {S}ydney, {AUSTRALIA}.
-
-\bibitem[Lee and Seung, 1999]{nmf1}
-Lee, D.~D. and Seung, H.~S. (1999).
-\newblock Learning the parts of objects by non-negative matrix factorization.
-\newblock {\em Nature}, 401(6755):788--791.
 
 \bibitem[Lee and Seung, 2000]{nmf2}
 Lee, D.~D. and Seung, H.~S. (2000).
@@ -136,82 +41,13 @@ Lee, D.~D. and Seung, H.~S. (2000).
   Information Processing Systems}, NIPS'00, pages 535--541, Cambridge, MA, USA.
   MIT Press.
 
-\bibitem[Li and Xiao, ]{nmf_denoising}
-Li, P. and Xiao, Y.
-\newblock Matrix factorization for speech enhancement.
-
 \bibitem[Moskvitch, 2017]{voicerecog_history}
 Moskvitch, K. (2017).
 \newblock The machines that learned to listen.
 \newblock {\em BBC Future}.
 
-\bibitem[Ng et~al., 2001]{spectralclustering}
-Ng, A.~Y., Jordan, M.~I., and Weiss, Y. (2001).
-\newblock On spectral clustering: Analysis and an algorithm.
-\newblock In {\em ADVANCES IN NEURAL INFORMATION PROCESSING SYSTEMS}, pages
-  849--856. MIT Press.
-
-\bibitem[Paatero and Tapper, 1994]{pmf}
-Paatero, P. and Tapper, U. (1994).
-\newblock Positive matrix factorization: A non-negative factor model with
-  optimal utilization of error estimates of data values.
-\newblock {\em Environmetrics}, 5(2):111--126.
-
-\bibitem[Rabiner, 1989]{rabiner_hmm_speech}
-Rabiner, L.~R. (1989).
-\newblock A tutorial on hidden markov models and selected applications in
-  speech recognition.
-\newblock {\em Proceedings of the IEEE}, 77(2):257--286.
-
-\bibitem[Rabiner and Juang, 1986]{rabiner_juang_hmm}
-Rabiner, L.~R. and Juang, B.-H. (1986).
-\newblock An introduction to hidden markov models.
-\newblock {\em IEEE ASSP Magazine}, 3:4--16.
-
-\bibitem[Reynolds et~al., 2000]{first_UBM}
-Reynolds, D.~A., Quatieri, T.~F., and Dunn, R.~B. (2000).
-\newblock Speaker verification using adapted gaussian mixture models.
-\newblock {\em Digital Signal Processing}, 10(1):19 -- 41.
-
-\bibitem[Schmidt and Olsson, 2006]{singlechannel}
-Schmidt, M.~N. and Olsson, R.~K. (2006).
-\newblock Single-channel speech separation using sparse non-negative matrix
-  factorization.
-\newblock In {\em INTERSPEECH}.
-
-\bibitem[Senoussaoui et~al., 2016]{ivec_nativelang}
-Senoussaoui, M., Cardinal, P., Dehak, N., and Koerich, A.~L. (2016).
-\newblock Native language detection using the i-vector framework.
-\newblock In {\em INTERSPEECH}.
-
 \bibitem[Shwartz-Ziv and Tishby, 2017]{blackbox}
 Shwartz-Ziv, R. and Tishby, N. (2017).
 \newblock Opening the black box of deep neural networks via information.
-
-\bibitem[Tiwari and Lotia, 2012]{advantageUBM}
-Tiwari, M.~S. and Lotia, P. (2012).
-\newblock Speaker verification system using gaussian mixture model and ubm.
-\newblock {\em International Journal of Digital Application and Contemporary
-  Research}, 1(3).
-
-\bibitem[VITERBI, 1967]{viterbi_original}
-VITERBI, A.~J. (1967).
-\newblock Error bounds for convolutional codes and an asymptotically optimal
-  decoding algorithm.
-\newblock {\em IEEE Transactions on Information Theory}, 13:260--269.
-
-\bibitem[Zhang et~al., 2015]{elasticSGD}
-Zhang, S., Choromanska, A.~E., and LeCun, Y. (2015).
-\newblock Deep learning with elastic averaging sgd.
-\newblock In Cortes, C., Lawrence, N.~D., Lee, D.~D., Sugiyama, M., and
-  Garnett, R., editors, {\em Advances in Neural Information Processing Systems
-  28}, pages 685--693. Curran Associates, Inc.
-
-\bibitem[Zhang et~al., 2016]{ASR_CNN_end2end}
-Zhang, Y., Pezeshki, M., Brakel, P., Zhang, S., Laurent, C., Bengio, Y., and
-  Courville, A. (2016).
-\newblock Towards end-to-end speech recognition with deep convolutional neural
-  networks.
-\newblock In {\em Interspeech 2016}, pages 410--414.
 
 \end{thebibliography}

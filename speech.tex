@@ -30,546 +30,575 @@ MIMIC II + 20kLeagues
 
 
 \subsection{Grade Reading Level of Various Texts}
-MIMIC II + 20kLeagues
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Automatic Speech Recognition Schematic for a Medical Setting}
-
-In order to have a speech recognition system to be able to understand medical language, it is important to obtain a big picture of the project.
-
-\begin{figure}[H]
 \begin{center}
-    \includegraphics[width=0.85\textwidth]{"./images/Schematics".png}
-    \caption{An illustration of the schematic of the automatic speech recognition system}
-    \label{fig::schematics}
+\begin{tabular}{|c|c|c|c|c|}
+    \hline
+    & \multicolumn{4}{|c|}{\textbf{Corpora}} \\
+    \cline{2-5}
+    \textbf{Scoring Method} & \textbf{DeID} & \textbf{Lord of The Rings: } & \textbf{Moby Dick} & \textbf{20000 Leagues }\\
+     & & \textbf{Fellowship of the Ring} & & \textbf{Under the Sea}\\
+    \hline
+    \textbf{Flesch Reading} & 54.3 & 54.8 & 67.4 & 56 \\
+    \textbf{Ease Score} & Fairly difficult & Fairly difficult & Standard/Average & Fairly difficult \\
+    \hline
+    \textbf{Gunning Fog} & 10 & 15.7 & 11.5 & 13.1\\
+    & Fairly easy & Difficult & Hard & Hard \\
+    \hline
+    \textbf{Flesch-Kincaid} & 8.7 & 13.7 & 9.2 & 10.6\\
+    \textbf{Grade Level} & 9th Grade & College & 9th Grade & 11th Grade\\
+    \hline
+    \textbf{Coleman-Liau} & 10 & 8 & 8 & 10\\
+    \textbf{Index} & 10th Grade & 8th Grade & 8th Grade & 10th Grade \\
+    \hline
+    \textbf{SMOG Index} & 8.7 & 9.7 & 8 & 10.1\\
+    & 9th Grade & 10th Grade & 8th Grade & 10th Grade\\
+    \hline
+    \textbf{Automated} & 7.2 & 15.1 & 9.7 & 11\\
+    \textbf{Readability Index} & 11-13 years old & College Graduate & 14-15 years old & 15-17 years old \\
+    \hline
+    \textbf{Linsear Write} & 7.3 & 18.9 & 12.6 & 13.4\\
+    \textbf{Formula} & 7th Grade & College Graduate & College & College \\
+    \hline
+\end{tabular}
 \end{center}
-\end{figure}
 
-As one can see from Figure \ref{fig::schematics}, the ASR would involve a microphone or an array of microphones which would go under speech enhancement and then go under a blind source separation, as there could be multiple different sources, such as different people speaking, a heart rate monitor, background music, a ventilator, etc. After the source separation, a transcription engine would transcribe the audio of the selected speakers, which could be filtered through a speaker verification/diarization system. 
-
-\subsection{AI-Complete and ASR-Complete}
-Although there have been many advancements in the speech technologies, especially through black boxes such as neural networks, and there currently exists very accurate engines to do voice recognition, it still remains to be an unsolved problem. The speech recognition problem is ASR-complete, which falls under the umbrella of AI-complete, which, by analogy of NP-completeness, means that the problem is hypothesized to deal with multiple parts of the AI world, and it cannot be solved by a single algorithm. Current technologies are not able to solve AI-complete problems, and they often require human computation. Since speech recognition is an AI-complete problem, there is still a lot of room for improvement in the fundamental problems that have not yet been solved, and although deep learning has recently shown promising results, deep learning neural networks (DNN) do not necessarily solve fundamental problems, as no one has a truthful understanding of how they work and behave. Therefore, there are a lot of possibilities for the formulation design of the framework (i.e. pipeline).
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Speech Enhancement}
-Speech enhancement is one of fundamental problems of speech that has not yet been fully solved yet, as noise is subjective, and there isn't necessarily one specific way of performing a fully accurate noise reduction for any type of noise. As previously mentioned before, a ventilator and heart rate monitor are examples of background noise that do not necessarily have a Gaussian distribution (i.e. it is not a white noise), yet, for ASR, they are both irrelevant. There are a number of methodologies that have been created to attempt to solve the problem of speech enhancement, and they may potentially be useful to be implemented onto the pipeline.
-
-\subsection{Recurrent Neural Networks for Noise Suppression} \label{sec:rnn}
-The work on recurrent neural networks (RNN) was originally shown by \cite{rnn1} and \cite{rnn2}, and it finally came to be coined by \cite{rnn3}. They have shown to work very efficiently with time-series data as their cyclic nature allows them to adapt to incoming inputs in a sequential form, working often times better than convolutional neural networks (CNN), when dealing with time-series data. Other variants of RNNs have been created, which allow them to store "memory" for future cases, with Long Short-Term Memory (LSTM) \cite{lstm1}, which were then further expanded with gates for Gated Recurrent Units (GRU) \cite{gru1} specifically to allow such units to forget information, and a visual representation of LSTMs and GRUs are shown on Figure \ref{fig::LSTM_GRU}
-
-\begin{figure}[H]
-\begin{center}
-    \raisebox{-0.5\height}{\includegraphics[width=0.45\textwidth]{"./images/LSTM".png}}
-    \raisebox{-0.5\height}{\includegraphics[width=0.45\textwidth]{"./images/GRU".png}}
-    \caption{A visual representation of the LSTM cell (Left) and the GRU cell (Right). The LSTM contains three representations of its states: the cell state/memory $c_t$, the hidden states $h_t$, and the input state $x_t$, all of which occurs at time $t$. On the GRU, there are the input state $x_t$, the hidden state $h_t$, the update gate $z_t$ and the reset gate $r_t$. The $\sigma$ block is used to represent a sigmoid function, and the $\tanh$ block is used to represent a hyperbolic tangent for both images. Please see \ref{app:LSTM_GRU} for the mathematical expressions of the cells above}
-    \label{fig::LSTM_GRU}
-\end{center}
-\end{figure}
-
-Because of the nature of the network being able to receive continuous sequential inputs, it becomes a very attractive model to potentially behave as an adaptive filter. Hence, members from the Xiph.Org Foundation, a non-profit organization, along with Mozilla have created a RNN architecture that is based on GRUs called RRNoise \cite{rrnoise}, which, after trained, is able to reduce a lot of the background noise of audio files, thus enhancing the signal. Below on Figure \ref{fig::RRNoisearch} is the topology of the RRNoise architecture, where it outputs voice activity detection (VAD) as well as the gains from the input features.
-
-\begin{figure}[H]
-\begin{center}
-    \includegraphics[width=0.65\textwidth]{"./images/RRNoise".png}
-    \caption{The topology of the RRNoise network used to perform noise reduction. This figure is taken from \cite{rrnoise}}
-    \label{fig::RRNoisearch}
-\end{center}
-\end{figure}
-
-\subsection{Non-Negative Matrix Factorization}
-Another very neat way of performing speech enhancement is via non-negative matrix factorization. Please skip to the Blind Source Separation's subsection on \hyperref[sec:NMF]{Non-Negative Matrix Factorization} \cite{spectralclustering}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Blind Source Separation}
-Given that a recording seldom contains one and only one speaker speaking at a time, an ASR may find itself troubled in detecting who is the speaker and who should be taken as the background. This is namely known as the Cocktail Party Effect. Its name originates from the idea that, in a cocktail party, there are multiple people speaking to one another. While a human is able to have a conversation with another, focusing on his/her friend while having all of the other speakers (i.e. sources) as background, an ASR system is not able to do so. Hence it is important to be able to separate a mixed signal to then be able to focus on a single individual and this is called blind source separation (BSS). There are two methodologies that are proposed to perform BSS: independent component analysis, and non-negative matrix factorization.
-
-
-\subsection{Independent Component Analysis}
-The first technique is the independent component analysis (ICA), in which it tries to solve the Cocktail Party Problem via a superposition of $J$ voices when being recorded by $N$ microphones (thus yielding $N$ recordings). For a discrete set of $M$ samples, there is a source matrix $\bm{Z} \in \mathbb{R}^{J \times M}$, with a data matrix $\bm{X} \in \mathbb{R}^{N\times M}$. There should then exist a mixing matrix $\bm{A} \in \mathbb{R}^{N\times J}$, such that
-
-\begin{align*}
-    \bm{X} &= \bm{AZ}^T \\
-    \mathbb{R}^{M\times N} &= \mathbb{R}^{N\times J} \mathbb{R}^{J\times M}
-\end{align*}
-The goal of ICA is to then find a demixing matrix $\bm{W}$ such that
-$$\bm{W} \approx \bm{A}^{-1}$$
-
-In practice, to perform such separation is by minimizing cost functions that are represented by mutual information entropy, or kurtosis. Those are chosen because in ICA, one must find a demixing matrix $\bm{W}$ that maximizing non-Gaussianity of each source.
-
-\subsubsection{Kurtosis}
-Kurtosis is the fourth statistical moment of a distribution which measures the relative peakness of a distribution with respect to a Gaussian. When the kurtosis is greater than 3, it is defined as \textit{leptokurtic} (i.e. super-Gaussian); when it is less than 3, it is \textit{platykurtic} (i.e. sub-Gaussian), and Gaussian distributionas are termed as \textit{mesokurtic}. The definition of the kurtosis $\kappa$ and the empirical kurtosis $\hat{\kappa}$ are defined as
-
-\begin{align*}
-    \kappa &= \frac{\mathbb{E}[(x-\mu_x)^2]}{\sigma^4} \\
-    \hat{\kappa} &= \frac{1}{M} \sum_{k=1}^{M} \left[ \frac{x_i - \hat{\mu}_x}{\hat{\sigma}}\right]^4
-\end{align*}
-
-Unfortuantely, disproportionate changes to the distribution tails cause large changes on the kurtosis.
-
-\subsubsection{Negentropy}
-Negentropy is an outlier insensitive method to estimate the fourth moment. We know that the entropy $H(y)$ of a random variable $y_i$ with a probability distribution $Pr(y_i)$ is
-
-$$H(y) = -\sum_i Pr(y_i) \log_2(Pr(y_i))$$
-
-This can be expanded to a differential entropy of a random vector $\bm{y}$ as
-$$H(\bm{y}) = - \int Pr(\bm{y}) \log_2 [Pr(\bm{y})] d\bm{y}$$
-
-One interesting outcome from information theory is that a Gaussian variable has the largest amount of entropy between any other random variable with equal variance. Therefore, the negentropy $\mathcal{J}$ is defined as
-
-$$\mathcal{J} (\bm{y}) = H(\bm{y}_G) - H(\bm{y})$$
-
-where $\bm{y}_G$ represents a Gaussian random vector with the same covariance as $\bm{y}$, where $H(\bm{y}) \geq H(\bm{y}_G)$. There are a number of ways to compute the negentropy. One way is to use kurtosis, but it yields the same errors as previously mensioned
-
-$$\mathcal{J}(y) \approx \frac{\mathbb{E}^2[y^3]}{12} + \frac{\kappa(\bm{y})^2}{48}$$
-
-Another way to compute negentropy is as follows:
-\begin{equation*}
-\begin{dcases}
-    \mathcal{J}(y) \approx \mathbb{E}[g(\bm{y})] - \mathbb{E}[g(\theta)] \\
-    g = \text{non-quadratic function s.t. it results always a non-negative result} = \frac{\ln(\cosh(\alpha y))}{\alpha} \text{ or } -\exp\left( - \frac{y^2}{2}\right)
-\end{dcases}
-\end{equation*}
-Thus one tries to maximize the $\mathcal{J}$ via a gradient ascent
-
-\subsubsection{Ambiguities}
-There are some ambiguities that are important to know in regards to the ICA solutions. The first one is permutation. Let $P \in \mathbb{R}^{n\times n}$ be any permutation matrix. E.g.
-
-\begin{equation*}
-    P = \begin{bmatrix} 1 & 0 & 0 \\ 0 & 0 & 1 \\ 0 & 1 & 0 \end{bmatrix} \text{ or } \begin{bmatrix}0 & 1 \\ 1 & 0 \end{bmatrix} \text{ or } \begin{bmatrix} 1 & 0 \\ 0 & 1 \end{bmatrix}
-\end{equation*}
-
-Thus, if $\overrightarrow{z}$ is a vector, $P\overrightarrow{z}$ is a permuted $\overrightarrow{z}$. So if one only has an observation $x \in \mathbb{R}^n$, then there's no way to distinguish between the unmixing matrix $W$ and $PW$. Therefore, the permutation of the original sources is ambiguous.
-
-The second ambiguity is scaling, such that,
-
-\begin{align*}
-    x &= As \\
-    &= (\alpha A)\left( \frac{1}{\alpha} s\right) \\
-    &= (2 A)\left( \frac{1}{2} s\right) \\
-    &= (3 A)\left( \frac{1}{3} s\right)
-\end{align*}
-
-Therefore, one cannot recover the correct scaling of the sources.
-% \subsubsection{Mutual Information}
-
-
-\subsection{Non-Negative Matrix Factorization (NMF) and Sparse NMF (SNMF)} \label{sec:NMF}
-\subsubsection{Background}
-One of the major drawbacks from any methodology in ICA is that it requires $N$ or more observations (i.e. microphone recordings) for $N$ sources (e.g. speakers, noise), which, depending on the circumstance, may be limiting. The method of non-negative matrix factorization (NMF), however, is able to perform BSS with very high accuracies, while using a single-channel recording. NMF originated in the field of chemometrics, where chemists were trying to identify contents of solutions via positive matrix factorization \cite{pmf} \cite{pmf_chem}. It was later further developed in \cite{nmf1} and algorithms were then better formulated in \cite{nmf2}.
-
-The concept behind NMF is that a mixed signal should be able to be decomposed into its unmixed signals, under the assumption that all of the superpositioned signals are non-negatively added to one another. In other words, they are positively added, but their value may also be zero. Conceptually, this makes absolute sense. If one see the work in \cite{nmf1}, one will see that many of the components added are interpretations of existing physical features, such as eyebrows and mustache. It does not make sense to add a negative eyebrow to reconstruct one's face. Hence, in retrospect, it makes complete sense why this methodology was being used in chemometrics, as it does not make sense to add a negative sulfate ion to a solution.
-
-One may ask how is this factorization different from other types of factorizations, such as principal component analysis (PCA). First, every factorization has different purposes; for instance, a Cholesky decomposition was specifically made to obtain lower computation complexity in order to invert matrices, where as PCA was made to obtain information about its principal orthogonal components. Second, when looking at the comparison between a signal reconstruction or separation from an NMF and from PCA, PCA poses a lot of problems. PCA only allows for the feature space to represent vectors that are orthogonal, which is not always the case. In the sense of speech, it is almost impossible for one speech signal to be orthogonal to another one. PCA also assumes that the probability distribution of the data follows a multivariate Gaussian, which again is not always the case. A NNF is very promising as it performs a matrix decomposition, which is very desirable for computational reconstruction in the last step of the BSS, and it is able to attain reconstructions just as detailed as some of the other reconstruction techniques, plus one is allowed to determine how many components to use.
-
-Here, the notation follows the notations shown in \cite{singlechannel}.
-
-Consider the magnitude of a spectrogram of a mixed speech signal $\bm{Y} \in \mathbb{R}^{M\times N}$, which is a summation of $R$ source signals (i.e. $\bm{Y} = \sum_{i=1}^{R} \bm{Y}_i$). The spectrogram can be sparsely represented in an overcomplete basis as
-
-$$\bm{Y} = \bm{D} \bm{H}$$
-
-where $\bm{D} \in \mathbb{R}^{M \times R}$ represents a compendium of dictionaries with $R$ columns, which can be chosen by the user, and $\bm{H} \in \mathbb{R}^{R \times N}$ represents a code matrix, which is sparse and it contains code matrices associated with the dictionaries in $\bm{D}$. The matrix $\bm{D}$ and $\bm{H}$ can be represented as
-\begin{equation*}
-    \bm{D} = \begin{bmatrix}
-    | & | & & | \\
-    | & | & & | \\
-    | & | & & | \\
-    \bm{D}_1 & \bm{D}_2 & \cdots & \bm{D}_R \\
-    | & | & & | \\
-    | & | & & | \\
-    | & | & & | \\
-    \end{bmatrix}
-\end{equation*}
-
-\begin{equation*}
-\bm{H} =
-    \begin{bmatrix}
-        --- & --- & --- & \bm{H}_1 & --- & --- & --- \\
-        --- & --- & --- & \bm{H}_1 & --- & --- & --- \\
-            &     &     & \vdots   &     &     &     \\
-        --- & --- & --- & \bm{H}_R & --- & --- & --- \
-    \end{bmatrix}
-\end{equation*}
-
-A simple version of how a NMF would work is shown in Figure \ref{fig::nmf_simple}, where the figure below was inspired on the works from \cite{singlechannel}.
-
-\begin{figure}[H]
-\begin{center}
-    \includegraphics[width=0.85\textwidth]{"./images/nmf1".png}
-    \caption{A very simple schematic of a non-negative matrix factorization, where the matrix on the left represents the mixed signal, the matrix on the center represents the dictionary matrix, and the matrix on the right represents the coding matrix}
-    \label{fig::nmf_simple}
-\end{center}
-\end{figure}
-
-There are two different ways to obtain the desired decomposition, and that is based on what optimization approach one wishes to take. One approach is to minimize the squared Euclidean-based Frobenius norm, $\| \bm{Y} - \bm{D}\bm{H} \|^2_F $, and another approach is to minimize the divergence, $\mathcal{D}(\bm{Y}\|\bm{DH})$, both cases with respect to $\bm{W}$ and $\bm{H}$, subject to the contraints that $\bm{D},\bm{H} \geq 0$ \cite{nmf2}. Both of their definitions are shown below, where the subscript $i$ represents the $i^{th}$ row, and the $j$ represents the $j^{th}$ column. Notice that the divergence measurement below is not the Kullback-Leibler (KL) divergence, but it does converge to the KL divergence if $\sum_{ij} A_{ij} = \sum_{ij} B_{ij} = 1$s
-
-\begin{equation*}
-\begin{dcases}
-\text{Norm:} & \|A - B \|^2_F = \sum_{i,j} (A_{ij} - B_{ij})^2 \\
-\text{Divergence:} & \mathcal{D}(A\|B) = \sum_{i,j} \left(A_{ij} \log \left( \frac{A_{ij}}{{B_{ij}}}  - A_{ij} + B_{ij} \right) \right)
-\end{dcases}
-\end{equation*}
-
-Because this is an iterative algorithm, if one follows the norm minimization, the update rules are:
-
-\begin{codebox}
-NMF Algorithm for Norm Minimization
-\begin{align*}
-    &1. \text{Initialize }\bm{D,H} \geq 0 \\
-    &2. \bm{H}_{ij} \leftarrow \bm{H}_{ij} \frac{ (\bm{D}^T \bm{Y})_{ij} }{ (\bm{D}^T \bm{D} \bm{H})_{ij} } \\
-    &3. \bm{D}_{ij} \leftarrow \bm{D}_{ij} \frac{ (\bm{Y} \bm{H}^T)_{ij} }{ (\bm{D}\bm{H}\bm{H}^T)_{ij} } \\
-    &4. \text{Repeat 2,3 until stability}
-\end{align*}
-\end{codebox}
-
-If one follows the divergence minimization, the update rules are
-\begin{codebox}
-NMF Algorithm for Divergence Minimization
-\begin{align*}
-    &1. \text{Initialize }\bm{D,H} \geq 0 \\
-    &2. \bm{H}_{ij} \leftarrow \bm{H}_{ij} \frac{ \sum_k \bm{D}_{ki} \bm{Y}_{kj} / (\bm{DH})_{kj} }{ \sum_l \bm{D}_{li} } \\
-    &3. \bm{D}_{ij} \leftarrow \bm{D}_{ij} \frac{ \sum_k \bm{H}_{jk} \bm{Y}_{ik} / (\bm{DH})_{ik} }{ \sum_l \bm{H}_{jl} } \\
-    &4. \text{Repeat 2,3 until stability}
-\end{align*}
-\end{codebox}
-
-If one performs an NMF, a visual representation is shown on Figure \ref{fig::nmf_example}, where the figure below was inspired on the works from \cite{singlechannel}.
-
-\begin{figure}[H]
-\begin{center}
-    \includegraphics[width=0.85\textwidth]{"./images/nmf2".png}
-    \caption{A visual example of an NMF result, with two sources being separated.}
-    \label{fig::nmf_example}
-\end{center}
-\end{figure}
-
-
-The algorithms for NMF were further improved by \cite{sparsenmf}, where the authors created a Sparse NMF. Their work was inspired by the basic NMF problems that, when one had overcomplete dictionaries, there was no well defined solution such that you would obtain sparse solutions. Thus, they wanted to make sure to obtain sparse solutions, especially on the coding matrix. To tune the sparsity measurement, the authors simply applied a L1 regularization based on the coding matrix coefficients on the cost functional of the norm, and called it a Sparse NMF. In other words, the cost (or energy) functional that originally was $\mathcal{E} = \| Y - \bar{\bm{D}} \bm{H} \|_F^2$ became
-
-$$\mathcal{E} = \| \bm{Y} - \bar{\bm{D}} \bm{H} \|_F^2 + \underbrace{\lambda \sum_{i,j} H_{ij}}_{L1\text{ regularization}} \quad s.t. \quad \bm{D},\bm{H} \geq 0$$
-
-where $\bar{\bm{D}}$ still follows the notation of \cite{singlechannel}, representing a column-wise normalized dictionary matrix, and $\lambda$ is the parameter to control the degree of sparsity. To solve this optimization problem, if one was to set $\bm{R} = \bm{DH}$, then one would obtain the following algorithm. Note, for this one case, that the dot sign $\cdot$ and and division operator $\frac{a}{b}$ represent point-wise multiplication and division
-
-\begin{codebox}
-Sparse NMF Algorithm for Frobenius Norm L1 Regularized Minimization
-\begin{align*}
-    &1. \text{Initialize }\bm{D,H} \geq 0 \\
-    &2. \bm{H}_{ij} \leftarrow \bm{H}_{ij} \cdot \frac{ \bm{Y}_i^T \bar{\bm{D}}_j }{  \bm{R}_i^T  \bar{\bm{D}}_j + \lambda } \quad \quad \quad \quad \quad \quad \quad \quad \in \mathbb{R}^1 \cdot \frac{\mathbb{R}^{1\times M} \mathbb{R}^{M \times 1}}{\mathbb{R}^{1\times M} \mathbb{R}^{M \times 1} + \mathbb{R}^{1}} \\
-    &3. \bm{D}_{ij} \leftarrow \bm{D}_{ij} \cdot \frac{ \sum_i \bm{H}_{ij} [ \bm{Y}_i + (\bm{R}_i^T \bar{\bm{D}}_j) \bar{\bm{D}}_j] }{ \sum_i \bm{H}_ij [\bm{R}_i + (\bm{Y}_i \bar{\bm{D}}_j) \bar{\bm{D}}_j ]} \quad \quad \quad \quad \in \mathbb{R}^{M\times 1} \cdot \frac{  \sum_i \mathbb{R}^{1} + (\mathbb{R}^{1\times M} \mathbb{R}^{M\times 1})\mathbb{R}^{M\times 1}  }{ \sum_i \mathbb{R}^{1} [\mathbb{R}^{M \times 1} + (\mathbb{R}^{1\times M} \mathbb{R}^{M\times 1}) \mathbb{R}^{M\times 1}]  }\\
-    &4. \text{Repeat 2,3 until stability}
-\end{align*}
-\end{codebox}
-
-All of the algorithms shown above are the steps necessary to train the algorithm, where $\bm{Y}$ contains all of the training data. In order to actually perform a speech reconstruction, one should simply perform the algorithms above, but to keep the dictionary matrix $\bm{D}$ fixed and update only the code matrix $\bm{H}$. The speech is then separated by conputing the reconstruction of parts of the sparse decomposition. In other words:
-\begin{enumerate}
-    \item Apply NMF or Sparse NMF to learn the dictionaries of individual speakers
-    \item To separate the mixtures, keep $\bm{D}$ fixed, and only update $\bm{H}$
-    \item Reconstruct the signal by using the desired parts of the decomposition
-\end{enumerate}
-
-
-\subsubsection{Aproaches to Learn Dictionaries}
-As shown in \cite{singlechannel}, there are multiple approaches to perform BSS with NMF or SNMF: unsupervised approach and segmenting the training data and solving multiple NMF problems
-
-In the unsupervised approach, one would compute the SNMF over a very large dataset matrix $\bm{Y}$ of a single speaker to obtain a single dictionary. This, however, may take a lot of computation time. The second approach, used in \cite{singlechannel} involved segmenting the training data according to phoneme labels obtained by a speech recognition software with hidden-Markov models (HMM) for a single speaker, and creating a sparse dictionary for each phoneme, and finally , a final dictionary would be constructed by the concatenation of individual phoneme dictionaries. In order to create the dictionary of each phoneme, each type of phoneme would be concatenated together, to create that phoneme's dictionary, and then, the phonemes dictionaries would be concatenated together to create a dictionary that is representative of the speaker. Figure \ref{fig::speaker_dict} shows an illustration on how to create the dictionary.
-
-\begin{figure}[H]
-\begin{center}
-    \includegraphics[width=0.45\textwidth]{"./images/speaker_dict".png}
-    \caption{An illustration on how to create a speaker's dictionary $\bm{D}_i$}
-    \label{fig::speaker_dict}
-\end{center}
-\end{figure}
-
-\subsubsection{NMF for Speech Enhancement}
-The works from \cite{nmf_denoising} have shown that it is also possible to perform speech enhancement on a speech signal via non-negative matrix factorization. An illustration on Figure \ref{fig::nmf_denoising}, inspired by the images on \cite{nmf_denoising}, shows the procedure. It is possible to generate the dictionary matrix $\bm{D}$ and the coding matrix $\bm{H}$ from a noisy signal, however one would not know which of the subdictionaries $\bm{D}_i$ or the code submatrices $\bm{H}_i$ represent the ones associated with the speech and with the noise. Through spectral clustering (for technical details, see \ref{app:spectralclustering}), it is possible to group the subparts of the dictionary matrix and the code matrix so that it is differentiated between speech and noise. Given that the reconstruction process is based on linear algebra rules, it is then possible to simply multiply the dictionary matrix related to speech $\bm{D}_{speech}$ and the code matrix related to speech $\bm{H}_{speech}$ to obtain the cleaned speech.
-
-Of course this solution is not guaranteed to remove every single noise source due to the possible stochasticity that is propagated to the eigenvectors of the Laplacian, and the fact that the solution is not unique, which is based on the initialization of the centroids of the k-means algorithm, but it could be a good fundamental method to implement.
-
-\begin{figure}[ht]
-\begin{center}
-    \includegraphics[width=0.4\textwidth]{"./images/nmf_denoising".png}
-    \caption{An illustration on how to use non-negative matrix factorization to denoise a signal, where $\bm{Y}$ represents the noisy signal, $\bm{D}$ represents the dictionary matrix obtained through NMF, and $\bm{H}$ represents the code matrix, also attained through the NMF. }
-    \label{fig::nmf_denoising}
-\end{center}
-\end{figure}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Speech Recognition}
-\subsection{Hidden-Markov Models and Gaussian Mixture Models} \label{sec:hmm}
-A well documented work that I've found on Gaussian mixture models was \cite{GMM1}, though works on the Expectation-Maximization (EM) algorithm have been shown as early as in \cite{dudaHart1973}. Such models are often used for unsupervised clustering classification problems, where one assumes the probability distribution of different classes to follow a Gaussian. As mentioned before, it is critical that the data has compactness in order to make the assumption that the data distributions follow Gaussians, and if not, spectral clustering (see \ref{app:spectralclustering}) may be ussed for clustering problems. Nonetheless, for speech, depending on the features that one may be using, it is very safe to assume that they follow Gaussian distributions, which has led a lot of work in speech to be dependent on derivatives of Gaussian mixture models. %For more detailed information on GMMs, please see \ref{app:gmm}
-
-One of the most important works for speech are the hidden Markov models (HMM). They were originally introduced by \cite{rabiner_juang_hmm} (which happens to be yet one of the best tutorials on HMMs), and shown to work greatly on speech \cite{rabiner_hmm_speech}. The Viterbi algorithm, which was first proposed in \cite{viterbi_original}, and later formalized in \cite{viterbi_algorithm}, is a great way to the solve HMM problems, via dynamic programming. Many consider HMMs to be dynamic forms of GMMs, where a single point in time of a HMMs is essentially a GMM (assuming a Gaussian distribution between the classifications), but this fails if the prior probabilities are not Gaussian. Although, most of the people in the machine learning field use GMMs for clustering classification, it was primarily created in order to create models that, when brought together, created a better representation of an unknown distribution, in the same way that boosting is used to combine different ML methods that complement each other to create a better regressor or classifier. Nonetheless, it became very common to use HMMs for speech recognition. For instance, the work from \cite{singlechannel} could not be completed if the authors did not have an HMM module to output phonemes to segment their signals in order to create dictionaries for SNMF.
-
-
-\begin{figure}[ht]
-\begin{center}
-    \includegraphics[width=0.28\textwidth]{"./images/HMM_simple".png}
-    \includegraphics[width=0.53\textwidth]{"./images/HMM_unrolled".png}
-    \caption{ A simple HMM with the states being the phonemes (shown as ARPABET). The image on the left shows the HMM in its compact form, and the image on the right shows the HMM unrolled over time.}
-    \label{fig::hmm_simple_unrolled}
-\end{center}
-\end{figure}
-
-As an example, Figure \ref{fig::hmm_simple_unrolled} shows an example of a HMM, where the states are the phonemes of the word "shoot". As it can be seen, there are multiple entry points to the model, where they can start at SH, UW or T, and as time progresses, which is demonstrated as the repetition of the three states to the right, it is possible that the SH will progress to SH, or any of the other phonemes, and this propagates throughout the entire signal. A set of features is computed over windows of a signal, and a set of features are extracted at each window. The Baum-Welch algorithm is then used to compute the statistics (i.e. "train") for the nodes and to compute the transition probabilities. Finally, when testing, the windows are classified over which states does it most likely belong to, such as with a GMM. The Viterbi-Trellis algorithm is then used to compute the optimal path over the trellis, thus defining all of the states over time. Because the algorithm is computed over a successive multiplication of the probabilities and transition probabilities, it is very likely that the numbers quickly decrease. Therefore, it is optimal to utilize log computations, especially for computers to be able to maintain float accuracies. Once done so, an optimal path is computed, which is depicted on Figure \ref{fig::hmm_simple_unrolled_soln} as a black line.
-
-\begin{figure}[h]
-\begin{center}
-    \includegraphics[width=0.7\textwidth]{"./images/HMM_unrolled_soln".png}
-    \caption{The theoretical Viterbi algorithm solution of a signal.}
-    \label{fig::hmm_simple_unrolled_soln}
-\end{center}
-\end{figure}
-
-HMMs are often formulated where states have substates. Building on the example above, the phonemes could be broken down to substates, which is shown on Figure \ref{fig::hmm_unrolled_ext}. On the illustration, dashed lines show the intra-state transition within each phonemes, and the solid lines represent the transition from one phoneme to another. Notice how, in a phoneme $X$, $X_1$ can only transition to itself or to a $X_2$. Likewise, $X_2$ can only transition to itself or to $X_3$, and $X_3$ can only transition to itself or to a new initial phoneme state $Y_1$.
-
-\begin{figure}[h]
-\begin{center}
-    \includegraphics[width=0.85\textwidth]{"./images/HMM_unrolled_ext".png}
-    \caption{An extended version of the HMM for three phonemes, in which each phoneme contains three substates. }
-    \label{fig::hmm_unrolled_ext}
-\end{center}
-\end{figure}
-
-Because of the powerful formulation which allows classifications to continuously repeat themselves over the analysis of an entire frame, HMM are one the more powerful techniques for time-series analysis or dynamic datastreams, while also having the ability to perform encoding over a signal.
-
-\subsection{Deep Learning Architectures}
-Another methodology that some consider it to be "state-of-the-art" is with deep learning, by using recurrent neural networks, which were previously described in \ref{sec:rnn}, there have been promising results using CNNs \cite{ASR_CNN_end2end}, as well as RNNs \cite{ASR_RNN} \cite{ASR_RNN_end2end}, and LSTMs \cite{ASR_LSTM}. The logic behind utilizing CNNs is the fact that a neuron would be a windowing function and classifier, which captures the content/interpretation of a signal as it slides over time, and thus it activates its successive neurons. However, because the authors provide no incentive of understanding the nature of their experiments, nor do they even include a discussion section over their work, and when they do, they simply state already known concepts in the field or regurgitate the aspects of their architecture, concluding the paper by stating that their future works will be to test on a larger dataset or try different architectures, I will move on with our discussion to more fruitful topics which contain explicit discussions with actual scientific approaches to solving problems.
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Speaker Verification and Speaker Diarization}
-When using an ASR system in a medical setting, privacy and accuracy is paramount. In other words, it is extremely important that medical records do not get leaked for obvious reasons, and to make sure that not anyone is logging information into a patient's medical records is also of extreme importance. The concept of a speaker verification system becomes an attractive mechanism for an ASR, such that it ensures that important information is coming specifically from the physician, and not anyone else.
-
-It is important to state that, in contrary to popular belief, speaker verification is not the same as speaker diarization (sometimes spelled as \textit{diarisation}). Speaker verification is a methodology used to determine whether the speaker is the target speaker or not, and this technology was made for security purposes, which in the end of the pipeline, it terminates with a yes/no answer. Speaker diarization, on the other hand, is used to answer the question: "Who spoke when?" It is, however, often times simple to tie these two subfields together, since computation powers have been becoming very powerful, and many times, the adaptation occurs at the last step switching boolean answers to a multiclass boolean problem or vice-versa, therefore, this section presents technologies for both fields together, since what is really important is the meaty part of the methods.
-
-One technique that has been considered state-of-the-art in the past few years is the i-vector methodology. In order to understand i-vectors, it is important to first understand Joint Factor Analysis (JFA), since i-vectors were based on the concepts from JFA. Prior to going into JFA, it is important to understand the difference between two types of session variations:
-\begin{itemize}
-    \item \textbf{Inter-Speaker Variation}: This is a variation originated from two utterances from different speakers.
-    \item \textbf{Inter-Session Variation}: This is a variation originated from utterances from the same speaker. This may be due to:
-    \begin{itemize}
-        \item \textit{Channel effects}: when utterances are recorded from different channels (e.g. microphones, environment)
-        \item \textit{Intra-Speaker Variation}: when utterances vary due to the speaker's health or emotional state
-    \end{itemize}
-\end{itemize}
-
-\subsection{Gaussian Mixture Model-Universal Background Model and Supervectors}
-
-\begin{figure}[ht]
-\begin{center}
-    \includegraphics[width=0.85\textwidth]{"./images/UBM_speaker".png}
-    \caption{An illustration of a speaker model and the adapted speaker model. }
-    \label{fig::ubm_graphs}
-\end{center}
-\end{figure}
-
-The Gaussian Mixture Model - Universal Background Model (GMM-UBM) approach was first introduced in \cite{first_UBM}, which is a different approach to doing speaker verification. As mentioned before, GMMs are useful for classifications, but they are also good for creating complex models that cannot be easily modeled after a closed form solution. The GMM-UBM model takes advantage of that.
-
-The UBM is built on a large dataset containing the background (or world) model. In other words, it contains data about the not-the-target, and this largely comprises the other speakers. A very large GMM is trained on it, and then the final UBM is obtained. Then the speaker model is created with a GMM such that it is adapted based on the UBM model. The illustration on Figure \ref{fig::ubm_speaker_model} shows the UBM in blue and the adapted speaker model in yellow (I'm colorblind, so I'm uncertain if this is correct). Once the UBM has been formed, the speaker model may be derived from the UBM via a maximum a posteriori adaptation.
-
-\subsubsection*{Maximum A Posteriori Adaptation of the UBM}
-Assume a GMM-UBM model has been created and is represented by the following equation
-$$ f(\tilde{\bm{x}}_n | \Lambda) = \sum_{g = 1}^M \pi_g \mathcal{N} (\tilde{\bm{x}}_n | \bm{mu}_g, \Sigma_g)$$
-
-where $\tilde{\bm{x}}$ represents the $n^{th}$ feature vector used for the UBM, $\pi_g$ represents the weight of the $g^{th}$ mixture component out of $M$ Gaussian components, with a mean vector $\bm{\mu}_g$ and covariance matrix $\Sigma_g$. The set of parameters for the GMM-UBM model is denoted as $\Lambda = \{ \pi_g, \mu_g, \Sigma_g | 1 \leq g \leq M \}$.
-Next let $X \in \{ \bm{x}_n | 1 \leq n \leq T\}$ represent the set of acoustic feature vectors by a speaker $s$, the first probability values $\gamma_n$ to be computed are
-$$\gamma_n (g) = Pr(g | \bm{x}_n) = \frac{\pi_g Pr(\bm{x}_n | g, \lambda_0)}{\sum_g \pi_g Pr(\bm{x}_n | g, \lambda_0)}$$
-
-These $\gamma_n(g)$ values are then used to calculate the 0th, 1st, and 2nd order Baum-Welch Statistics, shown respectively below, which represent the sufficient statistics for the weight, mean, and covariance parameters.
-
-\begin{figure}[h]
-\begin{center}
-    \includegraphics[width=0.85\textwidth]{"./images/GMM_UBM_graphs".png}
-    \caption{An illustration of (left) the GMM-UBM models with 4 components, which lead to the UBM supervector, and (right) the speaker adapted GMM based on the UBM model and the speaker data via a MAP algorithm to create the speaker supervector.}
-    \label{fig::ubm_speaker_graph}
-\end{center}
-\end{figure}
-
-\begin{align*}
-    BW^0_s (g) &= \sum_{n=1}^T \gamma_n(g) \\
-    BW^1_s (g) &= \sum_{n=1}^T \gamma_n(g) \bm{x}_n \\
-    BW^2_s (g) &= \sum_{n=1}^T \gamma_n(g) \bm{x}_n \bm{x}_n^T
-\end{align*}
-
-Once computed, the posterior mean and covariance matrix of the features may be computed, given the data vectors $X$, shown below respectively.
-
-\begin{align*}
-    \mathbb{E}_g [\bm{x}_n | X] &= \frac{BW^1_s (g)}{BW^0_s (g)} \\
-    \mathbb{E}_g [\bm{x}_n \bm{x}^T | X] &= \frac{BW^2_s (g)}{BW^0_s (g)}
-\end{align*}
-
-Then maximum a posteriori adaptation rule equations for the weight, mean and covariance, which are used for the speaker verification are computed as follow, assuming the following definition of $\alpha_g$
-\begin{equation*}
-\begin{dcases}
-    \alpha_g = \frac{BW^0_s(g)}{BW^0_s(g) + r} \\
-    \hat{\pi}_g = \beta \left[\alpha_g \frac{BW^0_s(g)}{T} + (1-\alpha_g) \pi_g\right]  \\
-    \hat{\bm{\mu}}_g = \alpha_g \mathbb{E}_g [\bm{x}_n | X] + (1-\alpha_g) \bm{mu}_g \\
-    \hat{\Sigma}_g = \alpha_g \mathbb{E}_g [\bm{x}_n \bm{x}_n^T | X ] + (1-\alpha_g)(\Sigma_g + \bm{\mu}_g  \bm{\mu}_g^T) - \hat{\mu}_g \hat{\mu}_g^T
-\end{dcases}
-\end{equation*}
-
-The scaling factor $\beta$ is based on all of the $\hat{\pi}_g$ ensuring that they all add up to 1, and the relevance factor $r$ is a control parameter on how the adapted GMM will be affected by the observed data. It turns out that the only effective parameter are the mean vectors $\hat{\bm{\mu}}_g$.
-
-Supervectors was first coined in \cite{supervectors}, where the mean vectors $\bm{\mu}_g$ are concatenated together to create a single large vector. Therefore, for an $M$ component Gaussian mixture with $F$ features, the supervector would live on the space $\mathbb{R}^{MF\times 1}$. Figure \ref{fig::ubm_speaker_graph} shows the UBM created over the background dataset, which is used along with the speaker data to adapt it onto a speaker mean supervector. Therefore, since the models shown in Figure \ref{fig::ubm_speaker_graph} have $M=4$ components, and it is in a 2D graph (i.e. $F=2$), then the supervector for both the UBM and the speaker would live in the space $\mathbb{R}^{MF\times 1} = \mathbb{R}^{8\times 1}$, and such vectors are suitable for SVM-based speaker recognition.
-
-One great advantage of using the UBM model is that it has a very nice performance, even if the speaker-dependent data is small; however, the disadvantage is that it requires a gender-balanced large speakers set in order to train it efficiently \cite{advantageUBM}. There has been a number of ways to represent the GMM supervector for a speaker $s$, but the generalized way to do so is to write
-
-$$\bm{M}(s) = \bm{m}_0 + \bm{m}_{speaker} + \bm{m}_{channel} + \bm{m}_{residual}$$
-
-where the $\bm{m}_0$ represents a speaker/channel/environment independent component, $\bm{m}_{speaker}$ represents a speaker-dependent component, $\bm{m}_{channel}$ represents a channel-dependent component, and $\bm{m}_{residual}$ represents a residual vector.
-
-\subsection{Eigenvoices and Eigenchannel}
-The concept of eigenvoices is drawn directly from principle component analysis (PCA), where it is solely a speaker-dependent mean supervector, with, of course, a speaker-independent supervector obtained from the UBM model, where $\bm{m}_{speaker} = \bm{V}{y}_s$.
-
-$$\bm{M}(s) = \bm{m}_0 + \bm{V}{y}_s$$
-
-The matrix $\bm{V}$ spans the speaker subspace, and $\bm{y}_s$ are the speaker factors. $\bm{V}$ then represents the eigenvoice matrix, and $\bm{y}_s$ represents the weight vector. The issue is that this model assumes that all of the speaker supervectors are completely contained in the eigenvoice subspace. Therefore, this model may be extended to the expression
-
-$$\bm{M}(s) = \bm{m}_0 + \bm{V}{y}_s + \bm{D}\bm{z}_s$$
-
-where the matrix $\bm{D}$ is a diagonal matrix and $\bm{z}_s$ is a normal random vector, which are used to make the residual term $\bm{m}_{residual} = \bm{Dz}_s$. A similar model may be created, but that is dependent on the channel factors instead, where $\bm{U}$ is a low-rank matrix spanning the channel subspace, and $\bm{c}_h\sim \mathcal{N}(0,\bm{I})$ is a random vector for an utterance $h$, making $\bm{m}_{channel} = \bm{U}{c}_h$
-
-$$\bm{M}(s) = \bm{m}_0 + \bm{U}{c}_h + \bm{D}\bm{z}_s$$
-
-\subsection{Joint Factor Analysis}
-The joint factor analysis was formulated by \cite{JFA1}, where they bring the eigenvoice and eigenchannel model together into a single model. The following equation follows the same notation
-
-$$\bm{M}(s) = \bm{m}_0 + \bm{V}{y}_s + \bm{U}\bm{c}_h + \bm{D}\bm{z}_s$$
-
-In order to obtain the JFA matrices and the factor vectors, it is required to follow the following order:
-\begin{enumerate}
-    \item Train the eigenvoice matrix $\bm{V}$ assuming that the eigenchannel matrix $\bm{U}$ and the residual matrix $\bm{D}$ are zero
-    \item Train the eigenchannel matrix $\bm{U}$ given the estimated $\bm{V}$, and still assuming $\bm{D}$ is zero.
-    \item Train the residual matrix $\bm{D}$ given the estimated $\bm{V}$ and $\bm{U}$.
-    \item Using the estimated matrices, compute the factor vectors $\bm{y}_s$, $\bm{c}_h$, and $\bm{z}_s$
-\end{enumerate}
-
-\subsubsection{Training the $\bm{V}$ matrix}
-Step 1. To train the $\bm{V}$ matrix, first compute the zeroth, first, and second order sufficient statistics
-\begin{align*}
-    \gamma_n (g) &= Pr(g | \bm{x}_n) = \frac{\pi_g Pr(\bm{x}_n | g, \lambda_0)}{\sum_g \pi_g Pr(\bm{x}_n | g, \lambda_0)}\\
-    BW^0_s (g) &= \sum_{n=1}^T \gamma_n(g) \\
-    BW^1_s (g) &= \sum_{n=1}^T \gamma_n(g) \bm{x}_n \\
-    BW^2_s (g) &= diag\left(\sum_{n=1}^T \gamma_n(g) \bm{x}_n \bm{x}_n^T \right)
-\end{align*}
-
-Step 2. Center the first and second order statistics
-\begin{align*}
-    \hat{BW}^1_s (g) &= BW^1_s - BW^0_s \bm{\mu}_g \\
-    \hat{BW}^2_s (g) &= BW^2_s - diag(BW^0_s \bm{\mu}^T + \bm{\mu} (BW^1_s)^T - BW^0_s \bm{\mu}_g \bm{\mu}_g^T)
-\end{align*}
-
-Step 3. One can then expand the statistics onto matrices
-\begin{align*}
-    \bm{BW^0}_s &= \begin{bmatrix} BW^0_s(1) \cdot \bm{I} &  &  \\  & \ddots &  \\ & & BW^0_s(M) \cdot \bm{I} \end{bmatrix} \\
-    \bm{BW^1}_s &= \begin{bmatrix} \hat{BW}^1_s(1) \\ \vdots \\ \hat{BW}^1_s(M) \end{bmatrix} \\
-    \bm{BW^2}_s &= \begin{bmatrix} \hat{BW}^2_s(1) \cdot \bm{I} &  &  \\  & \ddots &  \\ & & \hat{BW}^2_s(M) \cdot \bm{I} \end{bmatrix}
-\end{align*}
-
-Step 4. Make an estimate of the speaker factor $\bm{y}_s$
-\begin{align*}
-    v_s &= I + V^T \cdot \Sigma^{-1} \cdot \bm{BW^0}_s \cdot V \\
-    &\bm{y}_s \sim \mathcal{N}(v_s^{-1} \cdot V^T \cdot \Sigma^{-1} \cdot \bm{BW^1}_s , v_s^{-1}) \\
-    &\quad \quad \rightarrow \mathbb{E}[\bm{y}_s] = v_s^{-1} \cdot V^T \cdot \Sigma^{-1} \cdot \bm{BW^1}_s
-\end{align*}
-
-Step 5. Compute statistics across the speakers
-\begin{align*}
-    BW^0(g) &= \sum_s BW^0_s \\
-    A(g) &= \sum_s BM^0_s v_s^{-1} \\
-    \mathbb{C} &= \sum_s \bm{BW^1}_s \cdot \mathbb{E}[\bm{y}_s]^T \\
-    \bm{BW^0} &= \sum_s \bm{BW^0}_s
-\end{align*}
-
-It is possible to split $\mathbb{C}$ into
-$$\mathbb{C} = \begin{bmatrix} \mathbb{C}_1 \\ \vdots \\ \mathbb{C}_M \end{bmatrix} $$
-
-Step 6. Estimate $\bm{V}$
-$$\bm{V} = \begin{bmatrix} V_1 \\ \vdots \\ V_M \end{bmatrix} = \begin{bmatrix} A^{-1}(1) \cdot \mathbb{C}_1 \\ \vdots \\  A^{-1}(M) \cdot \mathbb{C}_M  \end{bmatrix}$$
-
-Step 7. Compute the covariance update
-$$\Sigma = (\bm{BW^0})^{-1} \left( \sum_s \bm{BW^2}_s - diag(\mathbb{C}\cdot V^T) \right)$$
-
-Step 8. Repeat steps 4-7
-
-\subsubsection{Training the $\bm{U}$ matrix}
-Because the eigenchannel matrix analyzes over the channel factors, it involves the changes between utterances.
-Step 1. Compute the the 0th and 1st order statistics of each conversation of each speaker
-\begin{align*}
-    N_{s,conv}(g) &= \sum_{n \in conv,s} \gamma_n (g) \\
-    F_{s,conv}(g) &= \sum_{n \in conv,s} \gamma_n(g) \bm{x}_n
-\end{align*}
-
-Step 2. For each speaker $s$, compute a speaker shift using $\bm{V}$ and the speaker factors $\bm{y}_s$.
-
-$$ spkshift_s = \bm{m}_0 + \bm{Vy}_s $$
-
-Step 3. Compute a speaker shifted version of the first order statistics given a Gaussian posterior weighing
-
-$$\hat{F}_{s,conv}(g) = F_{s,conv}(g) - spkshift_s \cdot N_{s,conv}(g) $$
-
-Step 4. Expand the statistics to matrices.
-
-\begin{align*}
-    NN_{s,conv} &= \begin{bmatrix} N_{s,conv}(1) \cdot \bm{I} & & \\ & \ddots & \\ & & N_{s,conv}(M) \cdot \bm{I}  \end{bmatrix} \\
-    FF_{s,conv} &= \begin{bmatrix} \hat{F}_{s,conv}(1) \\ \vdots \\ \hat{F}_{s,conv}(M) \end{bmatrix}
-\end{align*}
-
-Step 5. Use the same methodology of training $\bm{V}$ and $\bm{y}_s$ to train $\bm{U}$ and $\bm{c}$ by using $NN_{s,conv}$ and $FF_{s,conv}$, and iterate.
-
-\subsubsection{Training the $\bm{D}$ matrix}
-Finally, to compute the residual matrix,
-
-Step 1. For each speaker $s$, compute the speaker shift using $\bm{V}$ and the speaker factors $\bm{y}_s$
-$$ spkshift_s = \bm{m}_0 + \bm{Vy}_s $$
-
-Step 2. For each conversation side $conv$ of the speaker $s$, compute the channel shift using $\bm{U}$ and $\bm{z}$
-$$channelshift_{s,conv} = \bm{Uc}_{s,conv} $$
-
-Step 3. For each speaker that is being used for the JFA training, subtract the Gaussian posterior weighed speaker shift and the channel shifts from the first order statistics.
-
-$$\hat{F}_(g) = F_s(g) - spkshift_s \cdot N_s(g) - \sum_{conv \in s} channelshift_{s,conv} \cdot N_{s,conv}(g)$$
-
-Step 4. Expand the statistics to matrices.
-
-\begin{align*}
-    NN_{s,conv} &= \begin{bmatrix} N_{s,conv}(1) \cdot \bm{I} & & \\ & \ddots & \\ & & N_{s,conv}(M) \cdot \bm{I}  \end{bmatrix} \\
-    FF_{s,conv} &= \begin{bmatrix} \hat{F}_{s,conv}(1) \\ \vdots \\ \hat{F}_{s,conv}(M) \end{bmatrix}
-\end{align*}
-
-Step 5. Estimate the residual factors $\bm{z}$
-\begin{align*}
-    d_s &= \bm{I} + \bm{D}^2 \cdot \Sigma^{-1} \cdot NN_s \\
-    &\bm{z}_s \sim \mathcal{N}(d^{-1}_s \cdot D \cdot \Sigma^{-1} \cdot FF_s , d^{-1}_s) \\
-    &\quad \quad \mathbb{E}[\bm{z}_s] = d^{-1}_s \cdot \bm{D} \cdot \Sigma^{-1} \cdot FF_s
-\end{align*}
-
-Step 6. Obtain more statistics across the speakers
-
-\begin{align*}
-    N(g) &= \sum_s N_s (g) \\
-    a &= \sum_s diag(NN_s \cdot d^{-1}_s) \\
-    b &= \sum_s diag(FF_s \cdot \mathbb{E}[\bm{z}_s]) \\
-    NN &= \sum_s NN_s
-\end{align*}
-
-Step 7. Compute the $\bm{D}$ estimate
-$$\bm{D} = \begin{bmatrix} D_1 \\ \vdots \\ D_M \end{bmatrix} = \begin{bmatrix} a^{-1}(1) \cdot b_1 \\ \vdots \\  a^{-1}(M) \cdot b_M  \end{bmatrix} \text{ where } b = \begin{bmatrix} b_1 \\ \vdots \\ b_M\end{bmatrix}$$
-
-Step 8. Iterate steps 5-7
-
-\subsection{$i$-vectors}
-The identity-vectors (i-vectors) were created by \cite{ivec}, which follows the works on JFA. The methods for JFA were very promising as they were shown to contain information about speakers, and to work very well in other speech tasks such as language recognition, meaning that it had the power to group different languages. A recent work has shown that i-vectors are able to identify the native language of a speaker speaking a second language, indicating that they are capable of capturing information about the accents of an individual \cite{ivec_nativelang}. The motivation was that experiments showed that channel factors also contain speaker-dependent information. Therefore, in the i-vector methodology, speaker and channel factors were combined into a single matrix called the total variability matrix $\bm{T}$, which works in conjunction with the i-vector $w_{s}$. Therefore the speaker and session dependent GMM can be represented by
-
-$$\bm{M}_s = \bm{m}_0 + \bm{Tw}_s$$
-
-The hidden variables in the i-vector are called the total factors, such that $\bm{w}_s \sim \mathcal{N}(\bm{0,I})$. Although the hidden variables are not observable, they can be estimated via their posterior expectation. In many sense, this methodology is very similar to the PCA model, and the $\bm{T}$ matrix is trained using the same algorithms as for the JFA model, however each utterance is treated as if they were obtained from a different speaker.
-
-In order to obtain the i-vectors:
-\begin{enumerate}
-    \item Run the exact training procedure used to train the $\bm{V}$, while treating the conversations of all training speakers as to belong to different speakers.
-    \item With a given $\bm{T}$, compute i-vectors for each conversation side.
-    \item For the channel compensation, perform a linear discriminant analysis, followed by a within-class covariance normalization
-    \item Perform a cosine distance scoring o the channel-compensated i-vectors for a pair of conversation sides
-\end{enumerate}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% \section{Features from Speech}
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \section{Automatic Event Recognition in a Noisy Clinical Setting}
+%
+% In order to have a speech recognition system to be able to understand medical language, it is important to obtain a big picture of the project.
+%
+% \begin{figure}[H]
+% \begin{center}
+%     \includegraphics[width=0.85\textwidth]{"./images/Schematics".png}
+%     \caption{An illustration of the schematic of the automatic speech recognition system}
+%     \label{fig::schematics}
+% \end{center}
+% \end{figure}
+%
+% As one can see from Figure \ref{fig::schematics}, the ASR would involve a microphone or an array of microphones which would go under speech enhancement and then go under a blind source separation, as there could be multiple different sources, such as different people speaking, a heart rate monitor, background music, a ventilator, etc. After the source separation, a transcription engine would transcribe the audio of the selected speakers, which could be filtered through a speaker verification/diarization system.
+%
+% \subsection{AI-Complete and ASR-Complete}
+% Although there have been many advancements in the speech technologies, especially through black boxes such as neural networks, and there currently exists very accurate engines to do voice recognition, it still remains to be an unsolved problem. The speech recognition problem is ASR-complete, which falls under the umbrella of AI-complete, which, by analogy of NP-completeness, means that the problem is hypothesized to deal with multiple parts of the AI world, and it cannot be solved by a single algorithm. Current technologies are not able to solve AI-complete problems, and they often require human computation. Since speech recognition is an AI-complete problem, there is still a lot of room for improvement in the fundamental problems that have not yet been solved, and although deep learning has recently shown promising results, deep learning neural networks (DNN) do not necessarily solve fundamental problems, as no one has a truthful understanding of how they work and behave. Therefore, there are a lot of possibilities for the formulation design of the framework (i.e. pipeline).
+%
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \section{Speech Enhancement}
+% Speech enhancement is one of fundamental problems of speech that has not yet been fully solved yet, as noise is subjective, and there isn't necessarily one specific way of performing a fully accurate noise reduction for any type of noise. As previously mentioned before, a ventilator and heart rate monitor are examples of background noise that do not necessarily have a Gaussian distribution (i.e. it is not a white noise), yet, for ASR, they are both irrelevant. There are a number of methodologies that have been created to attempt to solve the problem of speech enhancement, and they may potentially be useful to be implemented onto the pipeline.
+%
+% \subsection{Recurrent Neural Networks for Noise Suppression} \label{sec:rnn}
+% The work on recurrent neural networks (RNN) was originally shown by \cite{rnn1} and \cite{rnn2}, and it finally came to be coined by \cite{rnn3}. They have shown to work very efficiently with time-series data as their cyclic nature allows them to adapt to incoming inputs in a sequential form, working often times better than convolutional neural networks (CNN), when dealing with time-series data. Other variants of RNNs have been created, which allow them to store "memory" for future cases, with Long Short-Term Memory (LSTM) \cite{lstm1}, which were then further expanded with gates for Gated Recurrent Units (GRU) \cite{gru1} specifically to allow such units to forget information, and a visual representation of LSTMs and GRUs are shown on Figure \ref{fig::LSTM_GRU}
+%
+% \begin{figure}[H]
+% \begin{center}
+%     \raisebox{-0.5\height}{\includegraphics[width=0.45\textwidth]{"./images/LSTM".png}}
+%     \raisebox{-0.5\height}{\includegraphics[width=0.45\textwidth]{"./images/GRU".png}}
+%     \caption{A visual representation of the LSTM cell (Left) and the GRU cell (Right). The LSTM contains three representations of its states: the cell state/memory $c_t$, the hidden states $h_t$, and the input state $x_t$, all of which occurs at time $t$. On the GRU, there are the input state $x_t$, the hidden state $h_t$, the update gate $z_t$ and the reset gate $r_t$. The $\sigma$ block is used to represent a sigmoid function, and the $\tanh$ block is used to represent a hyperbolic tangent for both images. Please see \ref{app:LSTM_GRU} for the mathematical expressions of the cells above}
+%     \label{fig::LSTM_GRU}
+% \end{center}
+% \end{figure}
+%
+% Because of the nature of the network being able to receive continuous sequential inputs, it becomes a very attractive model to potentially behave as an adaptive filter. Hence, members from the Xiph.Org Foundation, a non-profit organization, along with Mozilla have created a RNN architecture that is based on GRUs called RRNoise \cite{rrnoise}, which, after trained, is able to reduce a lot of the background noise of audio files, thus enhancing the signal. Below on Figure \ref{fig::RRNoisearch} is the topology of the RRNoise architecture, where it outputs voice activity detection (VAD) as well as the gains from the input features.
+%
+% \begin{figure}[H]
+% \begin{center}
+%     \includegraphics[width=0.65\textwidth]{"./images/RRNoise".png}
+%     \caption{The topology of the RRNoise network used to perform noise reduction. This figure is taken from \cite{rrnoise}}
+%     \label{fig::RRNoisearch}
+% \end{center}
+% \end{figure}
+%
+% \subsection{Non-Negative Matrix Factorization}
+% Another very neat way of performing speech enhancement is via non-negative matrix factorization. Please skip to the Blind Source Separation's subsection on \hyperref[sec:NMF]{Non-Negative Matrix Factorization} \cite{spectralclustering}
+%
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \section{Blind Source Separation}
+% Given that a recording seldom contains one and only one speaker speaking at a time, an ASR may find itself troubled in detecting who is the speaker and who should be taken as the background. This is namely known as the Cocktail Party Effect. Its name originates from the idea that, in a cocktail party, there are multiple people speaking to one another. While a human is able to have a conversation with another, focusing on his/her friend while having all of the other speakers (i.e. sources) as background, an ASR system is not able to do so. Hence it is important to be able to separate a mixed signal to then be able to focus on a single individual and this is called blind source separation (BSS). There are two methodologies that are proposed to perform BSS: independent component analysis, and non-negative matrix factorization.
+%
+% \subsection{Independent Component Analysis}
+% The first technique is the independent component analysis (ICA), in which it tries to solve the Cocktail Party Problem via a superposition of $J$ voices when being recorded by $N$ microphones (thus yielding $N$ recordings). For a discrete set of $M$ samples, there is a source matrix $\bm{Z} \in \mathbb{R}^{J \times M}$, with a data matrix $\bm{X} \in \mathbb{R}^{N\times M}$. There should then exist a mixing matrix $\bm{A} \in \mathbb{R}^{N\times J}$, such that
+%
+% \begin{align*}
+%     \bm{X} &= \bm{AZ}^T \\
+%     \mathbb{R}^{M\times N} &= \mathbb{R}^{N\times J} \mathbb{R}^{J\times M}
+% \end{align*}
+% The goal of ICA is to then find a demixing matrix $\bm{W}$ such that
+% $$\bm{W} \approx \bm{A}^{-1}$$
+%
+% In practice, to perform such separation is by minimizing cost functions that are represented by mutual information entropy, or kurtosis. Those are chosen because in ICA, one must find a demixing matrix $\bm{W}$ that maximizing non-Gaussianity of each source.
+%
+% \subsubsection{Kurtosis}
+% Kurtosis is the fourth statistical moment of a distribution which measures the relative peakness of a distribution with respect to a Gaussian. When the kurtosis is greater than 3, it is defined as \textit{leptokurtic} (i.e. super-Gaussian); when it is less than 3, it is \textit{platykurtic} (i.e. sub-Gaussian), and Gaussian distributionas are termed as \textit{mesokurtic}. The definition of the kurtosis $\kappa$ and the empirical kurtosis $\hat{\kappa}$ are defined as
+%
+% \begin{align*}
+%     \kappa &= \frac{\mathbb{E}[(x-\mu_x)^2]}{\sigma^4} \\
+%     \hat{\kappa} &= \frac{1}{M} \sum_{k=1}^{M} \left[ \frac{x_i - \hat{\mu}_x}{\hat{\sigma}}\right]^4
+% \end{align*}
+%
+% Unfortuantely, disproportionate changes to the distribution tails cause large changes on the kurtosis.
+%
+% \subsubsection{Negentropy}
+% Negentropy is an outlier insensitive method to estimate the fourth moment. We know that the entropy $H(y)$ of a random variable $y_i$ with a probability distribution $Pr(y_i)$ is
+%
+% $$H(y) = -\sum_i Pr(y_i) \log_2(Pr(y_i))$$
+%
+% This can be expanded to a differential entropy of a random vector $\bm{y}$ as
+% $$H(\bm{y}) = - \int Pr(\bm{y}) \log_2 [Pr(\bm{y})] d\bm{y}$$
+%
+% One interesting outcome from information theory is that a Gaussian variable has the largest amount of entropy between any other random variable with equal variance. Therefore, the negentropy $\mathcal{J}$ is defined as
+%
+% $$\mathcal{J} (\bm{y}) = H(\bm{y}_G) - H(\bm{y})$$
+%
+% where $\bm{y}_G$ represents a Gaussian random vector with the same covariance as $\bm{y}$, where $H(\bm{y}) \geq H(\bm{y}_G)$. There are a number of ways to compute the negentropy. One way is to use kurtosis, but it yields the same errors as previously mensioned
+%
+% $$\mathcal{J}(y) \approx \frac{\mathbb{E}^2[y^3]}{12} + \frac{\kappa(\bm{y})^2}{48}$$
+%
+% Another way to compute negentropy is as follows:
+% \begin{equation*}
+% \begin{dcases}
+%     \mathcal{J}(y) \approx \mathbb{E}[g(\bm{y})] - \mathbb{E}[g(\theta)] \\
+%     g = \text{non-quadratic function s.t. it results always a non-negative result} = \frac{\ln(\cosh(\alpha y))}{\alpha} \text{ or } -\exp\left( - \frac{y^2}{2}\right)
+% \end{dcases}
+% \end{equation*}
+% Thus one tries to maximize the $\mathcal{J}$ via a gradient ascent
+%
+% \subsubsection{Ambiguities}
+% There are some ambiguities that are important to know in regards to the ICA solutions. The first one is permutation. Let $P \in \mathbb{R}^{n\times n}$ be any permutation matrix. E.g.
+%
+% \begin{equation*}
+%     P = \begin{bmatrix} 1 & 0 & 0 \\ 0 & 0 & 1 \\ 0 & 1 & 0 \end{bmatrix} \text{ or } \begin{bmatrix}0 & 1 \\ 1 & 0 \end{bmatrix} \text{ or } \begin{bmatrix} 1 & 0 \\ 0 & 1 \end{bmatrix}
+% \end{equation*}
+%
+% Thus, if $\overrightarrow{z}$ is a vector, $P\overrightarrow{z}$ is a permuted $\overrightarrow{z}$. So if one only has an observation $x \in \mathbb{R}^n$, then there's no way to distinguish between the unmixing matrix $W$ and $PW$. Therefore, the permutation of the original sources is ambiguous.
+%
+% The second ambiguity is scaling, such that,
+%
+% \begin{align*}
+%     x &= As \\
+%     &= (\alpha A)\left( \frac{1}{\alpha} s\right) \\
+%     &= (2 A)\left( \frac{1}{2} s\right) \\
+%     &= (3 A)\left( \frac{1}{3} s\right)
+% \end{align*}
+%
+% Therefore, one cannot recover the correct scaling of the sources.
+% % \subsubsection{Mutual Information}
+%
+%
+% \subsection{Non-Negative Matrix Factorization (NMF) and Sparse NMF (SNMF)} \label{sec:NMF}
+% \subsubsection{Background}
+% One of the major drawbacks from any methodology in ICA is that it requires $N$ or more observations (i.e. microphone recordings) for $N$ sources (e.g. speakers, noise), which, depending on the circumstance, may be limiting. The method of non-negative matrix factorization (NMF), however, is able to perform BSS with very high accuracies, while using a single-channel recording. NMF originated in the field of chemometrics, where chemists were trying to identify contents of solutions via positive matrix factorization \cite{pmf} \cite{pmf_chem}. It was later further developed in \cite{nmf1} and algorithms were then better formulated in \cite{nmf2}.
+%
+% The concept behind NMF is that a mixed signal should be able to be decomposed into its unmixed signals, under the assumption that all of the superpositioned signals are non-negatively added to one another. In other words, they are positively added, but their value may also be zero. Conceptually, this makes absolute sense. If one see the work in \cite{nmf1}, one will see that many of the components added are interpretations of existing physical features, such as eyebrows and mustache. It does not make sense to add a negative eyebrow to reconstruct one's face. Hence, in retrospect, it makes complete sense why this methodology was being used in chemometrics, as it does not make sense to add a negative sulfate ion to a solution.
+%
+% One may ask how is this factorization different from other types of factorizations, such as principal component analysis (PCA). First, every factorization has different purposes; for instance, a Cholesky decomposition was specifically made to obtain lower computation complexity in order to invert matrices, where as PCA was made to obtain information about its principal orthogonal components. Second, when looking at the comparison between a signal reconstruction or separation from an NMF and from PCA, PCA poses a lot of problems. PCA only allows for the feature space to represent vectors that are orthogonal, which is not always the case. In the sense of speech, it is almost impossible for one speech signal to be orthogonal to another one. PCA also assumes that the probability distribution of the data follows a multivariate Gaussian, which again is not always the case. A NNF is very promising as it performs a matrix decomposition, which is very desirable for computational reconstruction in the last step of the BSS, and it is able to attain reconstructions just as detailed as some of the other reconstruction techniques, plus one is allowed to determine how many components to use.
+%
+% Here, the notation follows the notations shown in \cite{singlechannel}.
+%
+% Consider the magnitude of a spectrogram of a mixed speech signal $\bm{Y} \in \mathbb{R}^{M\times N}$, which is a summation of $R$ source signals (i.e. $\bm{Y} = \sum_{i=1}^{R} \bm{Y}_i$). The spectrogram can be sparsely represented in an overcomplete basis as
+%
+% $$\bm{Y} = \bm{D} \bm{H}$$
+%
+% where $\bm{D} \in \mathbb{R}^{M \times R}$ represents a compendium of dictionaries with $R$ columns, which can be chosen by the user, and $\bm{H} \in \mathbb{R}^{R \times N}$ represents a code matrix, which is sparse and it contains code matrices associated with the dictionaries in $\bm{D}$. The matrix $\bm{D}$ and $\bm{H}$ can be represented as
+% \begin{equation*}
+%     \bm{D} = \begin{bmatrix}
+%     | & | & & | \\
+%     | & | & & | \\
+%     | & | & & | \\
+%     \bm{D}_1 & \bm{D}_2 & \cdots & \bm{D}_R \\
+%     | & | & & | \\
+%     | & | & & | \\
+%     | & | & & | \\
+%     \end{bmatrix}
+% \end{equation*}
+%
+% \begin{equation*}
+% \bm{H} =
+%     \begin{bmatrix}
+%         --- & --- & --- & \bm{H}_1 & --- & --- & --- \\
+%         --- & --- & --- & \bm{H}_1 & --- & --- & --- \\
+%             &     &     & \vdots   &     &     &     \\
+%         --- & --- & --- & \bm{H}_R & --- & --- & --- \
+%     \end{bmatrix}
+% \end{equation*}
+%
+% A simple version of how a NMF would work is shown in Figure \ref{fig::nmf_simple}, where the figure below was inspired on the works from \cite{singlechannel}.
+%
+% \begin{figure}[H]
+% \begin{center}
+%     \includegraphics[width=0.85\textwidth]{"./images/nmf1".png}
+%     \caption{A very simple schematic of a non-negative matrix factorization, where the matrix on the left represents the mixed signal, the matrix on the center represents the dictionary matrix, and the matrix on the right represents the coding matrix}
+%     \label{fig::nmf_simple}
+% \end{center}
+% \end{figure}
+%
+% There are two different ways to obtain the desired decomposition, and that is based on what optimization approach one wishes to take. One approach is to minimize the squared Euclidean-based Frobenius norm, $\| \bm{Y} - \bm{D}\bm{H} \|^2_F $, and another approach is to minimize the divergence, $\mathcal{D}(\bm{Y}\|\bm{DH})$, both cases with respect to $\bm{W}$ and $\bm{H}$, subject to the contraints that $\bm{D},\bm{H} \geq 0$ \cite{nmf2}. Both of their definitions are shown below, where the subscript $i$ represents the $i^{th}$ row, and the $j$ represents the $j^{th}$ column. Notice that the divergence measurement below is not the Kullback-Leibler (KL) divergence, but it does converge to the KL divergence if $\sum_{ij} A_{ij} = \sum_{ij} B_{ij} = 1$s
+%
+% \begin{equation*}
+% \begin{dcases}
+% \text{Norm:} & \|A - B \|^2_F = \sum_{i,j} (A_{ij} - B_{ij})^2 \\
+% \text{Divergence:} & \mathcal{D}(A\|B) = \sum_{i,j} \left(A_{ij} \log \left( \frac{A_{ij}}{{B_{ij}}}  - A_{ij} + B_{ij} \right) \right)
+% \end{dcases}
+% \end{equation*}
+%
+% Because this is an iterative algorithm, if one follows the norm minimization, the update rules are:
+%
+% \begin{codebox}
+% NMF Algorithm for Norm Minimization
+% \begin{align*}
+%     &1. \text{Initialize }\bm{D,H} \geq 0 \\
+%     &2. \bm{H}_{ij} \leftarrow \bm{H}_{ij} \frac{ (\bm{D}^T \bm{Y})_{ij} }{ (\bm{D}^T \bm{D} \bm{H})_{ij} } \\
+%     &3. \bm{D}_{ij} \leftarrow \bm{D}_{ij} \frac{ (\bm{Y} \bm{H}^T)_{ij} }{ (\bm{D}\bm{H}\bm{H}^T)_{ij} } \\
+%     &4. \text{Repeat 2,3 until stability}
+% \end{align*}
+% \end{codebox}
+%
+% If one follows the divergence minimization, the update rules are
+% \begin{codebox}
+% NMF Algorithm for Divergence Minimization
+% \begin{align*}
+%     &1. \text{Initialize }\bm{D,H} \geq 0 \\
+%     &2. \bm{H}_{ij} \leftarrow \bm{H}_{ij} \frac{ \sum_k \bm{D}_{ki} \bm{Y}_{kj} / (\bm{DH})_{kj} }{ \sum_l \bm{D}_{li} } \\
+%     &3. \bm{D}_{ij} \leftarrow \bm{D}_{ij} \frac{ \sum_k \bm{H}_{jk} \bm{Y}_{ik} / (\bm{DH})_{ik} }{ \sum_l \bm{H}_{jl} } \\
+%     &4. \text{Repeat 2,3 until stability}
+% \end{align*}
+% \end{codebox}
+%
+% If one performs an NMF, a visual representation is shown on Figure \ref{fig::nmf_example}, where the figure below was inspired on the works from \cite{singlechannel}.
+%
+% \begin{figure}[H]
+% \begin{center}
+%     \includegraphics[width=0.85\textwidth]{"./images/nmf2".png}
+%     \caption{A visual example of an NMF result, with two sources being separated.}
+%     \label{fig::nmf_example}
+% \end{center}
+% \end{figure}
+%
+%
+% The algorithms for NMF were further improved by \cite{sparsenmf}, where the authors created a Sparse NMF. Their work was inspired by the basic NMF problems that, when one had overcomplete dictionaries, there was no well defined solution such that you would obtain sparse solutions. Thus, they wanted to make sure to obtain sparse solutions, especially on the coding matrix. To tune the sparsity measurement, the authors simply applied a L1 regularization based on the coding matrix coefficients on the cost functional of the norm, and called it a Sparse NMF. In other words, the cost (or energy) functional that originally was $\mathcal{E} = \| Y - \bar{\bm{D}} \bm{H} \|_F^2$ became
+%
+% $$\mathcal{E} = \| \bm{Y} - \bar{\bm{D}} \bm{H} \|_F^2 + \underbrace{\lambda \sum_{i,j} H_{ij}}_{L1\text{ regularization}} \quad s.t. \quad \bm{D},\bm{H} \geq 0$$
+%
+% where $\bar{\bm{D}}$ still follows the notation of \cite{singlechannel}, representing a column-wise normalized dictionary matrix, and $\lambda$ is the parameter to control the degree of sparsity. To solve this optimization problem, if one was to set $\bm{R} = \bm{DH}$, then one would obtain the following algorithm. Note, for this one case, that the dot sign $\cdot$ and and division operator $\frac{a}{b}$ represent point-wise multiplication and division
+%
+% \begin{codebox}
+% Sparse NMF Algorithm for Frobenius Norm L1 Regularized Minimization
+% \begin{align*}
+%     &1. \text{Initialize }\bm{D,H} \geq 0 \\
+%     &2. \bm{H}_{ij} \leftarrow \bm{H}_{ij} \cdot \frac{ \bm{Y}_i^T \bar{\bm{D}}_j }{  \bm{R}_i^T  \bar{\bm{D}}_j + \lambda } \quad \quad \quad \quad \quad \quad \quad \quad \in \mathbb{R}^1 \cdot \frac{\mathbb{R}^{1\times M} \mathbb{R}^{M \times 1}}{\mathbb{R}^{1\times M} \mathbb{R}^{M \times 1} + \mathbb{R}^{1}} \\
+%     &3. \bm{D}_{ij} \leftarrow \bm{D}_{ij} \cdot \frac{ \sum_i \bm{H}_{ij} [ \bm{Y}_i + (\bm{R}_i^T \bar{\bm{D}}_j) \bar{\bm{D}}_j] }{ \sum_i \bm{H}_ij [\bm{R}_i + (\bm{Y}_i \bar{\bm{D}}_j) \bar{\bm{D}}_j ]} \quad \quad \quad \quad \in \mathbb{R}^{M\times 1} \cdot \frac{  \sum_i \mathbb{R}^{1} + (\mathbb{R}^{1\times M} \mathbb{R}^{M\times 1})\mathbb{R}^{M\times 1}  }{ \sum_i \mathbb{R}^{1} [\mathbb{R}^{M \times 1} + (\mathbb{R}^{1\times M} \mathbb{R}^{M\times 1}) \mathbb{R}^{M\times 1}]  }\\
+%     &4. \text{Repeat 2,3 until stability}
+% \end{align*}
+% \end{codebox}
+%
+% All of the algorithms shown above are the steps necessary to train the algorithm, where $\bm{Y}$ contains all of the training data. In order to actually perform a speech reconstruction, one should simply perform the algorithms above, but to keep the dictionary matrix $\bm{D}$ fixed and update only the code matrix $\bm{H}$. The speech is then separated by conputing the reconstruction of parts of the sparse decomposition. In other words:
+% \begin{enumerate}
+%     \item Apply NMF or Sparse NMF to learn the dictionaries of individual speakers
+%     \item To separate the mixtures, keep $\bm{D}$ fixed, and only update $\bm{H}$
+%     \item Reconstruct the signal by using the desired parts of the decomposition
+% \end{enumerate}
+%
+%
+% \subsubsection{Aproaches to Learn Dictionaries}
+% As shown in \cite{singlechannel}, there are multiple approaches to perform BSS with NMF or SNMF: unsupervised approach and segmenting the training data and solving multiple NMF problems
+%
+% In the unsupervised approach, one would compute the SNMF over a very large dataset matrix $\bm{Y}$ of a single speaker to obtain a single dictionary. This, however, may take a lot of computation time. The second approach, used in \cite{singlechannel} involved segmenting the training data according to phoneme labels obtained by a speech recognition software with hidden-Markov models (HMM) for a single speaker, and creating a sparse dictionary for each phoneme, and finally , a final dictionary would be constructed by the concatenation of individual phoneme dictionaries. In order to create the dictionary of each phoneme, each type of phoneme would be concatenated together, to create that phoneme's dictionary, and then, the phonemes dictionaries would be concatenated together to create a dictionary that is representative of the speaker. Figure \ref{fig::speaker_dict} shows an illustration on how to create the dictionary.
+%
+% \begin{figure}[H]
+% \begin{center}
+%     \includegraphics[width=0.45\textwidth]{"./images/speaker_dict".png}
+%     \caption{An illustration on how to create a speaker's dictionary $\bm{D}_i$}
+%     \label{fig::speaker_dict}
+% \end{center}
+% \end{figure}
+%
+% \subsubsection{NMF for Speech Enhancement}
+% The works from \cite{nmf_denoising} have shown that it is also possible to perform speech enhancement on a speech signal via non-negative matrix factorization. An illustration on Figure \ref{fig::nmf_denoising}, inspired by the images on \cite{nmf_denoising}, shows the procedure. It is possible to generate the dictionary matrix $\bm{D}$ and the coding matrix $\bm{H}$ from a noisy signal, however one would not know which of the subdictionaries $\bm{D}_i$ or the code submatrices $\bm{H}_i$ represent the ones associated with the speech and with the noise. Through spectral clustering (for technical details, see \ref{app:spectralclustering}), it is possible to group the subparts of the dictionary matrix and the code matrix so that it is differentiated between speech and noise. Given that the reconstruction process is based on linear algebra rules, it is then possible to simply multiply the dictionary matrix related to speech $\bm{D}_{speech}$ and the code matrix related to speech $\bm{H}_{speech}$ to obtain the cleaned speech.
+%
+% Of course this solution is not guaranteed to remove every single noise source due to the possible stochasticity that is propagated to the eigenvectors of the Laplacian, and the fact that the solution is not unique, which is based on the initialization of the centroids of the k-means algorithm, but it could be a good fundamental method to implement.
+%
+% \begin{figure}[ht]
+% \begin{center}
+%     \includegraphics[width=0.4\textwidth]{"./images/nmf_denoising".png}
+%     \caption{An illustration on how to use non-negative matrix factorization to denoise a signal, where $\bm{Y}$ represents the noisy signal, $\bm{D}$ represents the dictionary matrix obtained through NMF, and $\bm{H}$ represents the code matrix, also attained through the NMF. }
+%     \label{fig::nmf_denoising}
+% \end{center}
+% \end{figure}
+%
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \section{Speech Recognition}
+% \subsection{Hidden-Markov Models and Gaussian Mixture Models} \label{sec:hmm}
+% A well documented work that I've found on Gaussian mixture models was \cite{GMM1}, though works on the Expectation-Maximization (EM) algorithm have been shown as early as in \cite{dudaHart1973}. Such models are often used for unsupervised clustering classification problems, where one assumes the probability distribution of different classes to follow a Gaussian. As mentioned before, it is critical that the data has compactness in order to make the assumption that the data distributions follow Gaussians, and if not, spectral clustering (see \ref{app:spectralclustering}) may be ussed for clustering problems. Nonetheless, for speech, depending on the features that one may be using, it is very safe to assume that they follow Gaussian distributions, which has led a lot of work in speech to be dependent on derivatives of Gaussian mixture models. %For more detailed information on GMMs, please see \ref{app:gmm}
+%
+% One of the most important works for speech are the hidden Markov models (HMM). They were originally introduced by \cite{rabiner_juang_hmm} (which happens to be yet one of the best tutorials on HMMs), and shown to work greatly on speech \cite{rabiner_hmm_speech}. The Viterbi algorithm, which was first proposed in \cite{viterbi_original}, and later formalized in \cite{viterbi_algorithm}, is a great way to the solve HMM problems, via dynamic programming. Many consider HMMs to be dynamic forms of GMMs, where a single point in time of a HMMs is essentially a GMM (assuming a Gaussian distribution between the classifications), but this fails if the prior probabilities are not Gaussian. Although, most of the people in the machine learning field use GMMs for clustering classification, it was primarily created in order to create models that, when brought together, created a better representation of an unknown distribution, in the same way that boosting is used to combine different ML methods that complement each other to create a better regressor or classifier. Nonetheless, it became very common to use HMMs for speech recognition. For instance, the work from \cite{singlechannel} could not be completed if the authors did not have an HMM module to output phonemes to segment their signals in order to create dictionaries for SNMF.
+%
+% \begin{figure}[ht]
+% \begin{center}
+%     \includegraphics[width=0.28\textwidth]{"./images/HMM_simple".png}
+%     \includegraphics[width=0.53\textwidth]{"./images/HMM_unrolled".png}
+%     \caption{ A simple HMM with the states being the phonemes (shown as ARPABET). The image on the left shows the HMM in its compact form, and the image on the right shows the HMM unrolled over time.}
+%     \label{fig::hmm_simple_unrolled}
+% \end{center}
+% \end{figure}
+%
+% As an example, Figure \ref{fig::hmm_simple_unrolled} shows an example of a HMM, where the states are the phonemes of the word "shoot". As it can be seen, there are multiple entry points to the model, where they can start at SH, UW or T, and as time progresses, which is demonstrated as the repetition of the three states to the right, it is possible that the SH will progress to SH, or any of the other phonemes, and this propagates throughout the entire signal. A set of features is computed over windows of a signal, and a set of features are extracted at each window. The Baum-Welch algorithm is then used to compute the statistics (i.e. "train") for the nodes and to compute the transition probabilities. Finally, when testing, the windows are classified over which states does it most likely belong to, such as with a GMM. The Viterbi-Trellis algorithm is then used to compute the optimal path over the trellis, thus defining all of the states over time. Because the algorithm is computed over a successive multiplication of the probabilities and transition probabilities, it is very likely that the numbers quickly decrease. Therefore, it is optimal to utilize log computations, especially for computers to be able to maintain float accuracies. Once done so, an optimal path is computed, which is depicted on Figure \ref{fig::hmm_simple_unrolled_soln} as a black line.
+%
+% \begin{figure}[ht]
+% \begin{center}
+%     \includegraphics[width=0.7\textwidth]{"./images/HMM_unrolled_soln".png}
+%     \caption{The theoretical Viterbi algorithm solution of a signal.}
+%     \label{fig::hmm_simple_unrolled_soln}
+% \end{center}
+% \end{figure}
+%
+% HMMs are often formulated where states have substates. Building on the example above, the phonemes could be broken down to substates, which is shown on Figure \ref{fig::hmm_unrolled_ext}. On the illustration, dashed lines show the intra-state transition within each phonemes, and the solid lines represent the transition from one phoneme to another. Notice how, in a phoneme $X$, $X_1$ can only transition to itself or to a $X_2$. Likewise, $X_2$ can only transition to itself or to $X_3$, and $X_3$ can only transition to itself or to a new initial phoneme state $Y_1$.
+%
+% \begin{figure}[ht]
+% \begin{center}
+%     \includegraphics[width=0.85\textwidth]{"./images/HMM_unrolled_ext".png}
+%     \caption{An extended version of the HMM for three phonemes, in which each phoneme contains three substates. }
+%     \label{fig::hmm_unrolled_ext}
+% \end{center}
+% \end{figure}
+%
+% Because of the powerful formulation which allows classifications to continuously repeat themselves over the analysis of an entire frame, HMM are one the more powerful techniques for time-series analysis or dynamic datastreams, while also having the ability to perform encoding over a signal.
+%
+% \subsection{Deep Learning Architectures}
+% Another methodology that some consider it to be "state-of-the-art" is with deep learning, by using recurrent neural networks, which were previously described in \ref{sec:rnn}, there have been promising results using CNNs \cite{ASR_CNN_end2end}, as well as RNNs \cite{ASR_RNN} \cite{ASR_RNN_end2end}, and LSTMs \cite{ASR_LSTM}. The logic behind utilizing CNNs is the fact that a neuron would be a windowing function and classifier, which captures the content/interpretation of a signal as it slides over time, and thus it activates its successive neurons. Recurrent neural networks and LSTMs are very fitting architectures for these time series data because they are able to iteratively move through windows of time, and are also able to iteratively output results, such as phonemes, letters, or words.
+%
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \section{Speaker Verification and Speaker Diarization}
+% When using an ASR system in a medical setting, privacy and accuracy is paramount. In other words, it is extremely important that medical records do not get leaked for obvious reasons, and to make sure that not anyone is logging information into a patient's medical records is also of extreme importance. The concept of a speaker verification system becomes an attractive mechanism for an ASR, such that it ensures that important information is coming specifically from the physician, and not anyone else.
+%
+% It is important to state that, in contrary to popular belief, speaker verification is not the same as speaker diarization (sometimes spelled as \textit{diarisation}). Speaker verification is a methodology used to determine whether the speaker is the target speaker or not, and this technology was made for security purposes, which in the end of the pipeline, it terminates with a yes/no answer. Speaker diarization, on the other hand, is used to answer the question: "Who spoke when?" It is, however, often times simple to tie these two subfields together, since computation powers have been becoming very powerful, and many times, the adaptation occurs at the last step switching boolean answers to a multiclass boolean problem or vice-versa, therefore, this section presents technologies for both fields together, since what is really important is the meaty part of the methods.
+%
+% One technique that has been considered state-of-the-art in the past few years is the i-vector methodology. In order to understand i-vectors, it is important to first understand Joint Factor Analysis (JFA), since i-vectors were based on the concepts from JFA. Prior to going into JFA, it is important to understand the difference between two types of session variations:
+% \begin{itemize}
+%     \item \textbf{Inter-Speaker Variation}: This is a variation originated from two utterances from different speakers.
+%     \item \textbf{Inter-Session Variation}: This is a variation originated from utterances from the same speaker. This may be due to:
+%     \begin{itemize}
+%         \item \textit{Channel effects}: when utterances are recorded from different channels (e.g. microphones, environment)
+%         \item \textit{Intra-Speaker Variation}: when utterances vary due to the speaker's health or emotional state
+%     \end{itemize}
+% \end{itemize}
+%
+% \subsection{Gaussian Mixture Model-Universal Background Model and Supervectors}
+%
+% \begin{figure}[ht]
+% \begin{center}
+%     \includegraphics[width=0.85\textwidth]{"./images/UBM_speaker".png}
+%     \caption{An illustration of a speaker model and the adapted speaker model. }
+%     \label{fig::ubm_graphs}
+% \end{center}
+% \end{figure}
+%
+% The Gaussian Mixture Model - Universal Background Model (GMM-UBM) approach was first introduced in \cite{first_UBM}, which is a different approach to doing speaker verification. As mentioned before, GMMs are useful for classifications, but they are also good for creating complex models that cannot be easily modeled after a closed form solution. The GMM-UBM model takes advantage of that.
+%
+% The UBM is built on a large dataset containing the background (or world) model. In other words, it contains data about the not-the-target, and this largely comprises the other speakers. A very large GMM is trained on it, and then the final UBM is obtained. Then the speaker model is created with a GMM such that it is adapted based on the UBM model. The illustration on Figure \ref{fig::ubm_speaker_model} shows the UBM in blue and the adapted speaker model in yellow (I'm colorblind, so I'm uncertain if this is correct). Once the UBM has been formed, the speaker model may be derived from the UBM via a maximum a posteriori adaptation.
+%
+% \subsubsection*{Maximum A Posteriori Adaptation of the UBM}
+% Assume a GMM-UBM model has been created and is represented by the following equation
+% $$ f(\tilde{\bm{x}}_n | \Lambda) = \sum_{g = 1}^M \pi_g \mathcal{N} (\tilde{\bm{x}}_n | \bm{mu}_g, \Sigma_g)$$
+%
+% where $\tilde{\bm{x}}$ represents the $n^{th}$ feature vector used for the UBM, $\pi_g$ represents the weight of the $g^{th}$ mixture component out of $M$ Gaussian components, with a mean vector $\bm{\mu}_g$ and covariance matrix $\Sigma_g$. The set of parameters for the GMM-UBM model is denoted as $\Lambda = \{ \pi_g, \mu_g, \Sigma_g | 1 \leq g \leq M \}$.
+% Next let $X \in \{ \bm{x}_n | 1 \leq n \leq T\}$ represent the set of acoustic feature vectors by a speaker $s$, the first probability values $\gamma_n$ to be computed are
+% $$\gamma_n (g) = Pr(g | \bm{x}_n) = \frac{\pi_g Pr(\bm{x}_n | g, \lambda_0)}{\sum_g \pi_g Pr(\bm{x}_n | g, \lambda_0)}$$
+%
+% These $\gamma_n(g)$ values are then used to calculate the 0th, 1st, and 2nd order Baum-Welch Statistics, shown respectively below, which represent the sufficient statistics for the weight, mean, and covariance parameters.
+%
+% \begin{figure}[ht]
+% \begin{center}
+%     \includegraphics[width=0.85\textwidth]{"./images/GMM_UBM_graphs".png}
+%     \caption{An illustration of (left) the GMM-UBM models with 4 components, which lead to the UBM supervector, and (right) the speaker adapted GMM based on the UBM model and the speaker data via a MAP algorithm to create the speaker supervector.}
+%     \label{fig::ubm_speaker_graph}
+% \end{center}
+% \end{figure}
+%
+% \begin{align*}
+%     BW^0_s (g) &= \sum_{n=1}^T \gamma_n(g) \\
+%     BW^1_s (g) &= \sum_{n=1}^T \gamma_n(g) \bm{x}_n \\
+%     BW^2_s (g) &= \sum_{n=1}^T \gamma_n(g) \bm{x}_n \bm{x}_n^T
+% \end{align*}
+%
+% Once computed, the posterior mean and covariance matrix of the features may be computed, given the data vectors $X$, shown below respectively.
+%
+% \begin{align*}
+%     \mathbb{E}_g [\bm{x}_n | X] &= \frac{BW^1_s (g)}{BW^0_s (g)} \\
+%     \mathbb{E}_g [\bm{x}_n \bm{x}^T | X] &= \frac{BW^2_s (g)}{BW^0_s (g)}
+% \end{align*}
+%
+% Then maximum a posteriori adaptation rule equations for the weight, mean and covariance, which are used for the speaker verification are computed as follow, assuming the following definition of $\alpha_g$
+% \begin{equation*}
+% \begin{dcases}
+%     \alpha_g = \frac{BW^0_s(g)}{BW^0_s(g) + r} \\
+%     \hat{\pi}_g = \beta \left[\alpha_g \frac{BW^0_s(g)}{T} + (1-\alpha_g) \pi_g\right]  \\
+%     \hat{\bm{\mu}}_g = \alpha_g \mathbb{E}_g [\bm{x}_n | X] + (1-\alpha_g) \bm{mu}_g \\
+%     \hat{\Sigma}_g = \alpha_g \mathbb{E}_g [\bm{x}_n \bm{x}_n^T | X ] + (1-\alpha_g)(\Sigma_g + \bm{\mu}_g  \bm{\mu}_g^T) - \hat{\mu}_g \hat{\mu}_g^T
+% \end{dcases}
+% \end{equation*}
+%
+% The scaling factor $\beta$ is based on all of the $\hat{\pi}_g$ ensuring that they all add up to 1, and the relevance factor $r$ is a control parameter on how the adapted GMM will be affected by the observed data. It turns out that the only effective parameter are the mean vectors $\hat{\bm{\mu}}_g$.
+%
+% Supervectors was first coined in \cite{supervectors}, where the mean vectors $\bm{\mu}_g$ are concatenated together to create a single large vector. Therefore, for an $M$ component Gaussian mixture with $F$ features, the supervector would live on the space $\mathbb{R}^{MF\times 1}$. Figure \ref{fig::ubm_speaker_graph} shows the UBM created over the background dataset, which is used along with the speaker data to adapt it onto a speaker mean supervector. Therefore, since the models shown in Figure \ref{fig::ubm_speaker_graph} have $M=4$ components, and it is in a 2D graph (i.e. $F=2$), then the supervector for both the UBM and the speaker would live in the space $\mathbb{R}^{MF\times 1} = \mathbb{R}^{8\times 1}$, and such vectors are suitable for SVM-based speaker recognition.
+%
+% One great advantage of using the UBM model is that it has a very nice performance, even if the speaker-dependent data is small; however, the disadvantage is that it requires a gender-balanced large speakers set in order to train it efficiently \cite{advantageUBM}. There has been a number of ways to represent the GMM supervector for a speaker $s$, but the generalized way to do so is to write
+%
+% $$\bm{M}(s) = \bm{m}_0 + \bm{m}_{speaker} + \bm{m}_{channel} + \bm{m}_{residual}$$
+%
+% where the $\bm{m}_0$ represents a speaker/channel/environment independent component, $\bm{m}_{speaker}$ represents a speaker-dependent component, $\bm{m}_{channel}$ represents a channel-dependent component, and $\bm{m}_{residual}$ represents a residual vector.
+%
+% \subsection{Eigenvoices and Eigenchannel}
+% The concept of eigenvoices is drawn directly from principle component analysis (PCA), where it is solely a speaker-dependent mean supervector, with, of course, a speaker-independent supervector obtained from the UBM model, where $\bm{m}_{speaker} = \bm{V}{y}_s$.
+%
+% $$\bm{M}(s) = \bm{m}_0 + \bm{V}{y}_s$$
+%
+% The matrix $\bm{V}$ spans the speaker subspace, and $\bm{y}_s$ are the speaker factors. $\bm{V}$ then represents the eigenvoice matrix, and $\bm{y}_s$ represents the weight vector. The issue is that this model assumes that all of the speaker supervectors are completely contained in the eigenvoice subspace. Therefore, this model may be extended to the expression
+%
+% $$\bm{M}(s) = \bm{m}_0 + \bm{V}{y}_s + \bm{D}\bm{z}_s$$
+%
+% where the matrix $\bm{D}$ is a diagonal matrix and $\bm{z}_s$ is a normal random vector, which are used to make the residual term $\bm{m}_{residual} = \bm{Dz}_s$. A similar model may be created, but that is dependent on the channel factors instead, where $\bm{U}$ is a low-rank matrix spanning the channel subspace, and $\bm{c}_h\sim \mathcal{N}(0,\bm{I})$ is a random vector for an utterance $h$, making $\bm{m}_{channel} = \bm{U}{c}_h$
+%
+% $$\bm{M}(s) = \bm{m}_0 + \bm{U}{c}_h + \bm{D}\bm{z}_s$$
+%
+% \subsection{Joint Factor Analysis}
+% The joint factor analysis was formulated by \cite{JFA1}, where they bring the eigenvoice and eigenchannel model together into a single model. The following equation follows the same notation
+%
+% $$\bm{M}(s) = \bm{m}_0 + \bm{V}{y}_s + \bm{U}\bm{c}_h + \bm{D}\bm{z}_s$$
+%
+% In order to obtain the JFA matrices and the factor vectors, it is required to follow the following order:
+% \begin{enumerate}
+%     \item Train the eigenvoice matrix $\bm{V}$ assuming that the eigenchannel matrix $\bm{U}$ and the residual matrix $\bm{D}$ are zero
+%     \item Train the eigenchannel matrix $\bm{U}$ given the estimated $\bm{V}$, and still assuming $\bm{D}$ is zero.
+%     \item Train the residual matrix $\bm{D}$ given the estimated $\bm{V}$ and $\bm{U}$.
+%     \item Using the estimated matrices, compute the factor vectors $\bm{y}_s$, $\bm{c}_h$, and $\bm{z}_s$
+% \end{enumerate}
+%
+% \subsubsection{Training the $\bm{V}$ matrix}
+% Step 1. To train the $\bm{V}$ matrix, first compute the zeroth, first, and second order sufficient statistics
+% \begin{align*}
+%     \gamma_n (g) &= Pr(g | \bm{x}_n) = \frac{\pi_g Pr(\bm{x}_n | g, \lambda_0)}{\sum_g \pi_g Pr(\bm{x}_n | g, \lambda_0)}\\
+%     BW^0_s (g) &= \sum_{n=1}^T \gamma_n(g) \\
+%     BW^1_s (g) &= \sum_{n=1}^T \gamma_n(g) \bm{x}_n \\
+%     BW^2_s (g) &= diag\left(\sum_{n=1}^T \gamma_n(g) \bm{x}_n \bm{x}_n^T \right)
+% \end{align*}
+%
+% Step 2. Center the first and second order statistics
+% \begin{align*}
+%     \hat{BW}^1_s (g) &= BW^1_s - BW^0_s \bm{\mu}_g \\
+%     \hat{BW}^2_s (g) &= BW^2_s - diag(BW^0_s \bm{\mu}^T + \bm{\mu} (BW^1_s)^T - BW^0_s \bm{\mu}_g \bm{\mu}_g^T)
+% \end{align*}
+%
+% Step 3. One can then expand the statistics onto matrices
+% \begin{align*}
+%     \bm{BW^0}_s &= \begin{bmatrix} BW^0_s(1) \cdot \bm{I} &  &  \\  & \ddots &  \\ & & BW^0_s(M) \cdot \bm{I} \end{bmatrix} \\
+%     \bm{BW^1}_s &= \begin{bmatrix} \hat{BW}^1_s(1) \\ \vdots \\ \hat{BW}^1_s(M) \end{bmatrix} \\
+%     \bm{BW^2}_s &= \begin{bmatrix} \hat{BW}^2_s(1) \cdot \bm{I} &  &  \\  & \ddots &  \\ & & \hat{BW}^2_s(M) \cdot \bm{I} \end{bmatrix}
+% \end{align*}
+%
+% Step 4. Make an estimate of the speaker factor $\bm{y}_s$
+% \begin{align*}
+%     v_s &= I + V^T \cdot \Sigma^{-1} \cdot \bm{BW^0}_s \cdot V \\
+%     &\bm{y}_s \sim \mathcal{N}(v_s^{-1} \cdot V^T \cdot \Sigma^{-1} \cdot \bm{BW^1}_s , v_s^{-1}) \\
+%     &\quad \quad \rightarrow \mathbb{E}[\bm{y}_s] = v_s^{-1} \cdot V^T \cdot \Sigma^{-1} \cdot \bm{BW^1}_s
+% \end{align*}
+%
+% Step 5. Compute statistics across the speakers
+% \begin{align*}
+%     BW^0(g) &= \sum_s BW^0_s \\
+%     A(g) &= \sum_s BM^0_s v_s^{-1} \\
+%     \mathbb{C} &= \sum_s \bm{BW^1}_s \cdot \mathbb{E}[\bm{y}_s]^T \\
+%     \bm{BW^0} &= \sum_s \bm{BW^0}_s
+% \end{align*}
+%
+% It is possible to split $\mathbb{C}$ into
+% $$\mathbb{C} = \begin{bmatrix} \mathbb{C}_1 \\ \vdots \\ \mathbb{C}_M \end{bmatrix} $$
+%
+% Step 6. Estimate $\bm{V}$
+% $$\bm{V} = \begin{bmatrix} V_1 \\ \vdots \\ V_M \end{bmatrix} = \begin{bmatrix} A^{-1}(1) \cdot \mathbb{C}_1 \\ \vdots \\  A^{-1}(M) \cdot \mathbb{C}_M  \end{bmatrix}$$
+%
+% Step 7. Compute the covariance update
+% $$\Sigma = (\bm{BW^0})^{-1} \left( \sum_s \bm{BW^2}_s - diag(\mathbb{C}\cdot V^T) \right)$$
+%
+% Step 8. Repeat steps 4-7
+%
+% \subsubsection{Training the $\bm{U}$ matrix}
+% Because the eigenchannel matrix analyzes over the channel factors, it involves the changes between utterances.
+% Step 1. Compute the the 0th and 1st order statistics of each conversation of each speaker
+% \begin{align*}
+%     N_{s,conv}(g) &= \sum_{n \in conv,s} \gamma_n (g) \\
+%     F_{s,conv}(g) &= \sum_{n \in conv,s} \gamma_n(g) \bm{x}_n
+% \end{align*}
+%
+% Step 2. For each speaker $s$, compute a speaker shift using $\bm{V}$ and the speaker factors $\bm{y}_s$.
+%
+% $$ spkshift_s = \bm{m}_0 + \bm{Vy}_s $$
+%
+% Step 3. Compute a speaker shifted version of the first order statistics given a Gaussian posterior weighing
+%
+% $$\hat{F}_{s,conv}(g) = F_{s,conv}(g) - spkshift_s \cdot N_{s,conv}(g) $$
+%
+% Step 4. Expand the statistics to matrices.
+%
+% \begin{align*}
+%     NN_{s,conv} &= \begin{bmatrix} N_{s,conv}(1) \cdot \bm{I} & & \\ & \ddots & \\ & & N_{s,conv}(M) \cdot \bm{I}  \end{bmatrix} \\
+%     FF_{s,conv} &= \begin{bmatrix} \hat{F}_{s,conv}(1) \\ \vdots \\ \hat{F}_{s,conv}(M) \end{bmatrix}
+% \end{align*}
+%
+% Step 5. Use the same methodology of training $\bm{V}$ and $\bm{y}_s$ to train $\bm{U}$ and $\bm{c}$ by using $NN_{s,conv}$ and $FF_{s,conv}$, and iterate.
+%
+% \subsubsection{Training the $\bm{D}$ matrix}
+% Finally, to compute the residual matrix,
+%
+% Step 1. For each speaker $s$, compute the speaker shift using $\bm{V}$ and the speaker factors $\bm{y}_s$
+% $$ spkshift_s = \bm{m}_0 + \bm{Vy}_s $$
+%
+% Step 2. For each conversation side $conv$ of the speaker $s$, compute the channel shift using $\bm{U}$ and $\bm{z}$
+% $$channelshift_{s,conv} = \bm{Uc}_{s,conv} $$
+%
+% Step 3. For each speaker that is being used for the JFA training, subtract the Gaussian posterior weighed speaker shift and the channel shifts from the first order statistics.
+%
+% $$\hat{F}_(g) = F_s(g) - spkshift_s \cdot N_s(g) - \sum_{conv \in s} channelshift_{s,conv} \cdot N_{s,conv}(g)$$
+%
+% Step 4. Expand the statistics to matrices.
+%
+% \begin{align*}
+%     NN_{s,conv} &= \begin{bmatrix} N_{s,conv}(1) \cdot \bm{I} & & \\ & \ddots & \\ & & N_{s,conv}(M) \cdot \bm{I}  \end{bmatrix} \\
+%     FF_{s,conv} &= \begin{bmatrix} \hat{F}_{s,conv}(1) \\ \vdots \\ \hat{F}_{s,conv}(M) \end{bmatrix}
+% \end{align*}
+%
+% Step 5. Estimate the residual factors $\bm{z}$
+% \begin{align*}
+%     d_s &= \bm{I} + \bm{D}^2 \cdot \Sigma^{-1} \cdot NN_s \\
+%     &\bm{z}_s \sim \mathcal{N}(d^{-1}_s \cdot D \cdot \Sigma^{-1} \cdot FF_s , d^{-1}_s) \\
+%     &\quad \quad \mathbb{E}[\bm{z}_s] = d^{-1}_s \cdot \bm{D} \cdot \Sigma^{-1} \cdot FF_s
+% \end{align*}
+%
+% Step 6. Obtain more statistics across the speakers
+%
+% \begin{align*}
+%     N(g) &= \sum_s N_s (g) \\
+%     a &= \sum_s diag(NN_s \cdot d^{-1}_s) \\
+%     b &= \sum_s diag(FF_s \cdot \mathbb{E}[\bm{z}_s]) \\
+%     NN &= \sum_s NN_s
+% \end{align*}
+%
+% Step 7. Compute the $\bm{D}$ estimate
+% $$\bm{D} = \begin{bmatrix} D_1 \\ \vdots \\ D_M \end{bmatrix} = \begin{bmatrix} a^{-1}(1) \cdot b_1 \\ \vdots \\  a^{-1}(M) \cdot b_M  \end{bmatrix} \text{ where } b = \begin{bmatrix} b_1 \\ \vdots \\ b_M\end{bmatrix}$$
+%
+% Step 8. Iterate steps 5-7
+%
+% \subsection{$i$-vectors}
+% The identity-vectors (i-vectors) were created by \cite{ivec}, which follows the works on JFA. The methods for JFA were very promising as they were shown to contain information about speakers, and to work very well in other speech tasks such as language recognition, meaning that it had the power to group different languages. A recent work has shown that i-vectors are able to identify the native language of a speaker speaking a second language, indicating that they are capable of capturing information about the accents of an individual \cite{ivec_nativelang}. The motivation was that experiments showed that channel factors also contain speaker-dependent information. Therefore, in the i-vector methodology, speaker and channel factors were combined into a single matrix called the total variability matrix $\bm{T}$, which works in conjunction with the i-vector $w_{s}$. Therefore the speaker and session dependent GMM can be represented by
+%
+% $$\bm{M}_s = \bm{m}_0 + \bm{Tw}_s$$
+%
+% The hidden variables in the i-vector are called the total factors, such that $\bm{w}_s \sim \mathcal{N}(\bm{0,I})$. Although the hidden variables are not observable, they can be estimated via their posterior expectation. In many sense, this methodology is very similar to the PCA model, and the $\bm{T}$ matrix is trained using the same algorithms as for the JFA model, however each utterance is treated as if they were obtained from a different speaker.
+%
+% In order to obtain the i-vectors:
+% \begin{enumerate}
+%     \item Run the exact training procedure used to train the $\bm{V}$, while treating the conversations of all training speakers as to belong to different speakers.
+%     \item With a given $\bm{T}$, compute i-vectors for each conversation side.
+%     \item For the channel compensation, perform a linear discriminant analysis, followed by a within-class covariance normalization
+%     \item Perform a cosine distance scoring o the channel-compensated i-vectors for a pair of conversation sides
+% \end{enumerate}
+%
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% % \section{Features from Speech}
