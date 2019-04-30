@@ -427,14 +427,129 @@ As the table shows, the Hamilton-Jacobi implementation will often lead to a lowe
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Characterization of Neural Networks as an Encoder-Decoder with Mutual Information \cite{blackbox}}
+This work was another very interesting work, in which they approached the analysis of deep learning from the perspective of information theory. A lot of the analysis shown in this paper involves the comparison of mutual information between different variables to understand how is it that fully connected neural networks learn.
 
+\subsection{Background}
+In this work, the authors use the notation of $x\in X$ to be the input patters, and $y\in Y$ to be the labels. Because neural networks is a way of showing the inputs as reduced representations, $T(X)$ denotes a representation (i.e. a layer), and the network tries to learn from an empirical sample drawn from an unknown joint distribution $P(X,Y)$.
+
+In this work, the authors postulate a that deep neural network (DNN) generates a Markov chain representation by minimizing an empirical error over the weights, and the optimization is taken through a stochastic gradient descent (SGD) over a noisy estimate of the gradient of the empirical error, also known as backpropagation. This work also treats a whole layer $T$ as a single random variable, where an encoder $Pr(T|X)$ and a decoder $Pr(Y|T)$ characterize the layer, and an invertible transformation of representations is important to ensure that the transformation preserves information. Therefore, it is important quantify the representations with numbers that are invariant to any invertible reparametrization of T, and the mutual information $I(T,X)$ and $I(T,Y)$ is a fitting quantification. The mutual information is defined as
+
+\begin{align*}
+    I(X,Y) &= D_{KL} [Pr(x,y) \| Pr(X) Pr(Y)] \\
+    &= \sum_{x,y} Pr(x,y) \log \left( \frac{Pr(x,y)}{Pr(x)Pr(y)} \right) \\
+    &= \sum_{x,y} Pr(x,y) \log \left( \frac{Pr(x|y)}{Pr(x)} \right) \\
+    &= H(X) - H(X|Y) \\
+    &= \text{entropy of $X$} - \text{conditional entropy of X given Y}
+\end{align*}
+
+The mutual information quantifies the number of relevant bits that an input $X$ contains about label $Y$ on average. It is also important to mention that mutual information also has the commutative property.
+
+It is also important to mention some properties with graphs and their mutual information characteristics. Given a Markov chain
+
+$$ X \rightarrow Y \rightarrow Z$$
+
+the data processing inequality states that
+$$I(X,Y) \geq I(X,Z)$$
+
+which means that information is generally lost when transmitted through a noisy channel.
+
+\subsection{The Information Plane}
+In this work, \cite{blackbox} postulate that the SGD has two phases that occur in this sequence
+\begin{enumerate}
+    \item Empirical error minimization (ERM)
+    \item Representation compression
+\end{enumerate}
+where both of them have very different signal-to-noise ratios of the stochastic gradients at every layer. In the ERM, the gradient norms are much greater than the stochastic fluctuation, and in the compression, the fluctuation of gradients is much greater than the means, where the weights change as Weiner processes (i.e. random diffusions) with small influence on the error gradients. A lot of the work in \cite{blackbox} perform the analysis on the information plane, where the two axes are different mutual information measurements.
+
+For a $K$-layer neural network, where $T_i$ represents the $i^{th}$ hidden layer as the single multivariate variable, any representation $T_i(X)$ is a mapping of $X$, characterized by $P(X,Y)$ or by the encoder distribution $P(T|X)$ and the decoder distribution $P(Y|T)$, ad the layers are mapped to $K$ monotonic connected paths in the plane, meaning that they satisfy the data processing inequality (DPI), where $\hat{Y}$ represents the predicted label,
+
+$$I(X,Y) \geq I(T_1,Y) \geq I(T_2,Y) \geq \cdots \geq I(T_K,Y) \geq I(\hat{Y},Y)$$
+$$H(X)   \geq I(X,T_1) \geq I(X,T_2) \geq \cdots \geq I(X,T_K) \geq I(X,\hat{Y})$$
+
+Thus this work shows graphs plotting $I(X,T_i)$ vs $I(T_i,Y)$.
+
+\subsection{Numerical Experiments}
+\begin{figure}[ht]
+\begin{center}
+    \includegraphics[width=0.5\textwidth]{"./images/dnn_infoplane2".png}
+    \caption{The network used for all of the numerical experiments}
+    \label{fig::dnn_infoplane}
+\end{center}
+\end{figure}
+
+For the numerical experiments, as shown in Figure \ref{fig::dnn_infoplane}, the authors used a fully connected architecture of the sequence (12,10,7,5,4,3,2) nodes where the inputs were binary, all of the activation functions were the hyperbolic tangent except for the last one with a sigmoid, a cross-entropy loss without any regularizer, and a stochastic gradient descent. In order to estimate the mutual information, there would be 50 randomized initializations, and the hyperbolic tangent values were binned in 30 intervals between -1 and 1.
+
+\begin{figure}[ht]
+\begin{center}
+    \includegraphics[width=0.88\textwidth]{"./images/infoplane1_mod".png}
+    \caption{The profile of the information place over of 50 randomly initialized networks, (left) when initialized, (center) after 400 epochs, and (right) after 9000 epochs. The dots in orange represent the last layer while the dots in green represent the initial layer.}
+    \label{fig::dnn_infoplane}
+\end{center}
+\end{figure}
+
+When observing the information plane profile of 50 randomly initialized networks after different epochs, as shown in Figure \ref{fig::dnn_infoplane}, it is possible to see that the layers first go through the empirical error minimization, where it allows the $I(T,Y)$ to greatly increase, and this phase occurs quickly. After the first phase, then the compression phase occurs, where the network starts to find a better compression on the input data, which is indicated by the reduction in $I(X,T)$.
+
+\begin{figure}[ht]
+\begin{center}
+    \includegraphics[width=0.88\textwidth]{"./images/infoplane2".png}
+    \caption{The evolution of the mutual information profile while using (left) 5\% of the data, (center) 45\% of the data, and (right) 85\% of the data}
+    \label{fig::info_trainingdata1}
+\end{center}
+\end{figure}
+
+Another approach that was to look at different training data sizes, which is shown in Figure \ref{fig::info_trainingdata1}. By doing so, it was clear to see that by having low training data size, the ERM phase remains relatively the same, but however, in the compression phase, the mutual information between the layers and the labels do decrease, meaning that it is overfitting to the small amount of data, which simplfies the layers' representations but loses the relevant information.
+
+% \begin{figure}[ht]
+% \begin{center}
+%     \includegraphics[width=0.7\textwidth]{"./images/infoplane4".png}
+%     \caption{The stable states of the information plane using different amounts of training data}
+%     \label{fig::info_trainingdata2}
+% \end{center}
+% \end{figure}
+
+\begin{figure}[ht]
+\begin{center}
+    \includegraphics[width=0.6\textwidth]{"./images/info_stochasticgrads_mod".png}
+    \caption{The evolution of the normalized means and standard deviations of the weights and over the epochs. The first phase is described as the drift phase, with high signal-to-noise ratio, and the second phase is described as the diffusion phase, with low signal-to-noise ratios. The colors are represented by the weights of the respective layers shown in the inset illustration of the neural network.}
+    \label{fig::info_sgd}
+\end{center}
+\end{figure}
+
+The results from Figure \ref{fig::info_sgd} show the profiles of the normalized mean and standard deviations of the weights in a network. It starts off with a high signal-to-noise ratio, represented as the drift, and then it ends with a low signal-to-noise ratio, represented as the diffusion. During the drift, the network reduces the empirical error, while in the diffusion, it adds random noise to the weights, making it evolve as if it was a Wiener process. These processes can then be described by a Focker-Planck equation, where the stationary distribution attempts to maximize the conditional entroy, thus minimizing the mutual information.
+
+\begin{figure}[ht]
+\begin{center}
+    \includegraphics[width=0.88\textwidth]{"./images/infoplane3".png}
+    \caption{The information plane profiles with varying number of hidden layers, between 1-6.}
+    \label{fig::info_varlayers}
+\end{center}
+\end{figure}
+
+The final set of main results shown are in Figure \ref{fig::info_varlayers}, where the authors change the number of layers in the network, ranging from 1-6 hidden layers. This shows that the compression phase is significantly faster when the network is deeper, where the compression occurs faster on the deeper layers. Another remark they found is that, for this case, widening the hidden layers did not help much as all of the hidden layers eventually compress.
+
+
+% \begin{figure}[ht]
+% \begin{center}
+%     \includegraphics[width=0.7\textwidth]{"./images/bottleneck".png}
+%     \caption{The network used for all of the numerical experiments}
+%     \label{fig::bottleneck}
+% \end{center}
+% \end{figure}
+This paper was very interesting as it proposes a different methodology to understand how does information flow within neural networks. Although this is a topic that is very specific to these fully connected layered networks, it provides an entrypoint in a different perspective, which can be applied to different types of neural networks.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Residual Networks as a Mean-Field Optimal Control Problem \cite{meanfield}}
 
+\begin{figure}[ht]
+\begin{center}
+    \includegraphics[width=0.4\textwidth]{"./images/ResNets".png}
+    \caption{An illustration of a residual network, where every layer is added to the following layer}
+    \label{fig::resnets}
+\end{center}
+\end{figure}
 
 \subsection{Background}
-This paper was very interesting because it creates a optimal control formulation of a specific type of deep learning methodology. More specifically, it formulates a residual network as an optimal control problem. This is specifically because the feed forward propagation of a $T$-layer residual network is represented by
+This paper was very interesting because it creates a optimal control formulation of a specific type of deep learning methodology. More specifically, it formulates a residual network, as shown in Figure \ref{fig::resnets}, as an optimal control problem. This is specifically because the feed forward propagation of a $T$-layer residual network is represented by
 
 \begin{equation} \label{eq::resnet_form}
     x_{t+1} = x_t + f(x_t,\theta_t) \quad \quad \quad t \in \{0,\cdots,T-1\}
@@ -549,5 +664,5 @@ $$\mathbb{P}[|J(\bm{\theta}^N) - J(\bm{\theta}^*) \geq s] \leq 4 \exp\left( - \f
 
 
 Although this paper relied heavily on proofs, this paper presents a very important formulation for ResNets, establishing solid and proofed entrypoints to the understanding of the mathematical theory behind ResNets.
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% \section{Future}
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% % \section{Future}

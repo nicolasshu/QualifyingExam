@@ -35,6 +35,37 @@ Although sigmoid functions are often frowned upon in the deep learning community
 
 
 \section{Spectral Clustering} \label{app:spectralclustering}
+
+There are a lot of different clustering algorithms which may be used for unsupervised learning, but the issue is that, algorithms such as k-means or Gaussian mixture model clusterings assume that there is a compactness on the data. However, as seen in in Figure \ref{app::specclust}. Therefore, spectral clustering is a methodology in which allows one to cluster data based on proximity/connectivity.
+
+\begin{figure}[H]
+\begin{center}
+    \includegraphics[width=0.45\textwidth]{"./images/spectralclustering".png}
+    \caption{A clustering result based on a (a) k-Means and (b) Spectral clustering}
+    \label{app::specclust}
+\end{center}
+\end{figure}
+
+
+In order to do a spectral clustering, first, one needs to compute an adjacency matrix $A$, where, for the $i^{th}$ node and $j^{th}$ node,
+\begin{equation*}
+    A_{ij} = \begin{cases}
+                w_{ij}   \quad \text{: weight of the edge $(i,j)$}
+                0        \quad \text{: if no edge exists between $i$ and $j$}
+            \end{cases}
+\end{equation*}
+
+Then one needs to obtain the Laplacian matrix $L$, which is defined as $L=D-A$, where D is the diagonal matrix of degrees
+\begin{align*}
+    d_i &= \sum_j w_{ij} \\
+    L_{ij} &= \begin{cases}
+    d_i &\text{: if $i=j$} \\
+    -w_{ij} &\text{if $(i,j)$ is an edge} \\
+    0 &\text{if no edge between $i,j$}
+    \end{cases}
+\end{align*}
+
+Once the Laplacian matrix has been computed, then one can compute the eigenvectors and eigenvalues of $L$. The number of eigenvalues that equal 0 defines the quantity of clusters that are likely to be created, and to compute the algebraic connectivity of the graph. Then, a k-means clustering algorithm can be applied on the elements of the eigenvectors in order to identify the clusters, and see which datapoint (i.e. node) belongs to which class.
 % \section{Mel-Frequency Cepstrum Coefficients}
 % \section{Linear Prediction Coefficients and its Derivatives}
 
