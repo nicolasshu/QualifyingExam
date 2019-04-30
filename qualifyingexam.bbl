@@ -11,6 +11,12 @@ Barak, A.~P. (1988).
 \newblock Learning state space trajectories in recurrent neural networks.
 \newblock {\em Neural Computation}, 1:263--269.
 
+\bibitem[Chaudhari et~al., 2017]{entropySGD}
+Chaudhari, P., Choromanska, A., Soatto, S., LeCun, Y., Baldassi, C., Borgs, C.,
+  Chayes, J., Sagun, L., and Zecchina, R. (2017).
+\newblock Entropy-sgd: Biasing gradient descent into wide valleys.
+\newblock In {\em International Conference on Learning Representations (ICLR)}.
+
 \bibitem[Chaudhari et~al., 2018]{deeprelaxation}
 Chaudhari, P., Oberman, A., Osher, S., Soatto, S., and Carlier, G. (2018).
 \newblock Deep relaxation: partial differential equations for optimizing deep
@@ -193,6 +199,13 @@ VITERBI, A.~J. (1967).
 \newblock Error bounds for convolutional codes and an asymptotically optimal
   decoding algorithm.
 \newblock {\em IEEE Transactions on Information Theory}, 13:260--269.
+
+\bibitem[Zhang et~al., 2015]{elasticSGD}
+Zhang, S., Choromanska, A.~E., and LeCun, Y. (2015).
+\newblock Deep learning with elastic averaging sgd.
+\newblock In Cortes, C., Lawrence, N.~D., Lee, D.~D., Sugiyama, M., and
+  Garnett, R., editors, {\em Advances in Neural Information Processing Systems
+  28}, pages 685--693. Curran Associates, Inc.
 
 \bibitem[Zhang et~al., 2016]{ASR_CNN_end2end}
 Zhang, Y., Pezeshki, M., Brakel, P., Zhang, S., Laurent, C., Bengio, Y., and

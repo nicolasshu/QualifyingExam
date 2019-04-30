@@ -4,6 +4,8 @@ Although the field of deep learning has been growing at an incredibly fast rate,
 
 * \textit{It occurred last semester that one of our collegues (a PhD student) in Georgia Tech was invited to review papers for NIPS because he had a few publications in deep learning. He was in fact stressed about it and asking for help as he had never reviewed any publications before, and he was uncertain how to do so.}
 
+\textbf{Note that each section has their own independent notation.}
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{The Stochastic Thermodynamics of Learning \cite{thermo}}
 The first field that is described follows the field of thermodynamics and a little bit of information theory. Note that, although showing the work from \cite{thermo}, I am changing some of the notations to a set of notations that is a bit more familiar.
@@ -15,7 +17,7 @@ First, modeling a neuron, let a neuron make $N$ connections to ther neurons, whi
   \mathcal{A}^p &= \frac{\bm{w} \cdot \bm{x}^p}{\sqrt{N}}
 \end{align*}
 
-\begin{figure}[h]
+\begin{figure}[ht]
 \begin{center}
     \includegraphics[width=0.6\textwidth]{"./images/neuron_model".png}
     \caption{The model of a neuron, where the $p^{th}$ input-target pair is used to compute $\mathcal{A}^p$, which then is used to compute the transition rates ratio between the two labels $\{-1,+1\}$}
@@ -114,7 +116,7 @@ $$\frac{\partial Pr(y,w,\hat{y},t)}{\partial t} = - \frac{\partial j_w (t)}{\par
 
 yields the mutual information $I(y:\hat{y})$. This then is enough to create the plot shown in Figure \ref{fig::learning_efficiency}
 
-\begin{figure}[h]
+\begin{figure}[ht]
 \begin{center}
     \includegraphics[width=0.4\textwidth]{"./images/learning_efficiency_graph".png}
     \caption{The learning efficiency profile with varying learning duration $\tau$ and varying learning rate $\nu$, with a Hebbian learning problem}
@@ -154,27 +156,398 @@ This can be used to compute the Hebbian learning efficiency $\tilde{\eta}$ as
 $$\tilde{\eta} = \alpha \frac{I(y^p:\hat{y}^p)}{\Delta S(w_n) + \bar{\Delta Q_n}}$$
 
 Hence, if a Monte-Carlo integration of $Pr(\bm{y},\bm{w},\hat{\bm{y}})$ with $N=10,000$, one obtains the following graphs.
-\begin{figure}[h]
+\begin{figure}[ht]
 \begin{center}
     \includegraphics[width=0.6\textwidth]{"./images/learning_efficiency_graph2".png}
     \caption{The mutual information profile with varying learning rates $\nu$ on with a Hebbian learning problem. The inset graph shows the learning efficiency $\tilde{\eta}$ in the limits $\tau \rightarrow 0$ (solid) and $\tau \rightarrow \infty$ (dashed)}
-    \label{fig::learning_efficiency}
+    \label{fig::learning_efficiency2}
 \end{center}
 \end{figure}
 
-It is important to note that as $P$ increases, the mutual information decreases because of hte thermal noise in the system, and the well-known failure ofHebbian learning to use information in the samples perfectly. In both plots, $\nu$ increases from bottom to top.
+It is important to note that as $P$ increases, the mutual information decreases because of hte thermal noise in the system, and the well-known failure of Hebbian learning to use information in the samples perfectly. In both plots, $\nu$ increases from bottom to top.
 
-This paper was
+This paper was very interesting because, although it was a full learning efficiency analysis over a very specific type of learning, Hebbian learning, which is connected to a fully connected layer architecture in deep learning, it does open the idea to try to expand the same formulations to different paradigms in deep learning.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Deep Relaxation: PDEs for Optimizing Deep Neural Networks \cite{deeprelaxation}}
 
+\begin{figure}[ht]
+\begin{center}
+    \includegraphics[width=0.7\textwidth]{"./images/deeprelax_1".png}
+    \caption{A 1D loss profile of different formulations of the loss function, and the location of which algorithms converge to as shown with their respective colors but with a transparency value lower than 1 }
+    \label{fig::deeprelax_1}
+\end{center}
+\end{figure}
+
+This paper was another example that was the analysis over a very specific part of deep learning. In a previous work, \cite{entropySGD} had introduced a new type of stochastic gradient descent algorithm, the Entropy-SGD algorithm, which was shown to perform better than optimizers such as the Adam optimizer, yielding a modified loss function, called "local entropy" $f_\gamma(x)$
+
+\begin{align*}
+    f_\gamma(x) &= -\log \left( G_\gamma * e^{-f(x)}\right) \tag{local entropy} \\
+    G_\gamma (x) &= (2\pi \gamma)^{-N/2} \exp\left( -\frac{|x|^2}{2\gamma}\right) = \text{Gaussian heat kernel}  \\
+    f(x) &= \text{a loss function (e.g. cross-entropy loss w/ or w/o a regularizer)} \\
+    x &= \text{weights of the neural network where } x \in \mathbb{R}^N
+\end{align*}
+
+where $\gamma$ represents the variance (or covariance) in the Gaussian kernel.
+
+\subsection{PDE Interpretation of local entropy}
+
+It is well known that the solution to the heat equation $u_t = \frac{1}{2} \Delta u$ with an initial condition $u(x,0) = f(x)$ yields the solution
+$$u(x,t) = G_t * f(x)$$
+
+As we know, although the $\gamma$ in (local entropy) represents variance, through the heat equation, it can easily be depicted as a time variable $t$. Then one can prove that the (local entropy) $f_\gamma(x)$ is the solution $u(x,t)$ of the viscous Hamilton-Jacobi PDE
+
+\begin{equation*}
+    \frac{\partial u}{\partial t} = -\frac{1}{2} | \nabla u |^2 + \frac{1}{2} \Delta u \quad \text{ where } 0 < t <\gamma \tag{viscous HJ}
+\end{equation*}
+ \begin{tcolorbox}[breakable]
+\begin{proof}
+
+Define a generalized solution
+$$u(x,t) = - \log (\nu(x,t))$$
+Then the equation $\nu(x,t) = e^{-u(x,t)}$ solves the heat equation $\nu_t = \frac{1}{2} \Delta \nu$, given $\nu(x,0) = e^{-f(x)}$. Therefore, the partial derivatives are defined as
+\begin{equation*}
+\begin{cases}
+\nu_t = -\nu u_t  \\
+\nabla \nu = -\nu \nabla u \\
+\Delta \nu = - \nu \Delta u + \nu | \nabla u | ^2
+\end{cases}
+\end{equation*}
+
+This then yields
+\begin{align*}
+    \nu_t &= \frac{1}{2} \Delta \nu \\
+    -\nu u_t &= \frac{1}{2}\left( - \nu \Delta u + \nu | \nabla u | ^2 \right) \\
+    u_t &= \frac{1}{2}\left( \Delta u - | \nabla u | ^2 \right) = - \frac{1}{2}  | \nabla u | ^2 + \frac{1}{2} \Delta u\\
+\end{align*}
+\end{proof}
+\end{tcolorbox}
+
+Then they show that local entropy is a more powerful way to smooth than with gradient averaging, as well as to derive a simple update rule for the Entropy-SGD algorithm. But first, one needs to show that the gradient of the local entropy $\nabla f_\gamma(x)$ can be shown in two ways:
+
+\begin{align*}
+\nabla f_\gamma(x) = \nabla u(x,\gamma) =&
+\begin{dcases}
+\int_{\mathbb{R}^n} \frac{x-y}{\gamma} \rho_1^\infty(dy;x) \\
+\int_{\mathbb{R}^n} \nabla f(x-y) \rho_2^\infty(dy;x)
+\end{dcases} \\
+\text{ where }&
+\begin{dcases}
+\rho_1^\infty(y;x ) = Z_1^{-1} \exp\left( -f(y) - \frac{1}{2t} |x-y|^2 \right) \\
+\rho_2^\infty(y;x ) = Z_2^{-1} \exp\left( -f(x-y) - \frac{1}{2t} |y|^2 \right) \\
+\end{dcases}
+\end{align*}
+
+This can then be extended towards the non-viscous form of the Hamilton-Jacobi equation
+
+\begin{equation*}
+    \frac{\partial u}{\partial t} = - \frac{1}{2} | \nabla u |^2 \tag{non-viscous HJ}
+\end{equation*}
+
+where it is just like the (viscous HJ), but the coefficient in front of the Laplacian operator $\Delta$ is zero, which makes a simpler formula for the gradient. One may define, as shown in \textbf{Lemma 5} in \cite{deeprelaxation}, that if $u(x,t)$ is the viscosity solution of (HJ) with $u(x,0) = f(x)$,
+
+\begin{equation}
+    u(x,t) = \inf_y \left\{ f(y) + \frac{1}{2t} |x-y|^2 \right\} \tag{HL}
+\end{equation}
+Define the proximal operator (defined in the community) as
+
+\begin{equation*}
+    y^* = prox_{tf}(x) = \arg \min_y \left\{ f(y) + \frac{1}{2t} |x-y| ^2 \right\}
+\end{equation*}
+
+If the proximal operator is a singleton, $\nabla_x u(x,t)$ exists, which is
+
+\begin{equation} \label{eq::gradx_u}
+        \nabla_x u(x,t) = \frac{x-y^*}{t} = \nabla f(y^*)
+\end{equation}
+
+Using this, the discrete-time gradient descent dynamics using \ref{eq::gradx_u} is
+
+$$x_{k+1} = x_k - \eta t^{-1} (x_k - prox_{tf}(x_k))$$
+
+where $\eta > 0$ as the step-size. If $\eta = t$, then it becomes the proximal point iteration
+
+$$x_{k+1} = prox_{tf}(x_k)$$
+
+The standard proximal gradiant descent is given by
+
+$$x_{k+1} = prox_{th}(x_k - t \nabla g(x_k))$$
+
+where the loss function is made up of a convex function $g(x)$, and a potentially non-differentiable regularizer $h(x)$. The proximal operator equals to the implicit gradient descent, which is led due to the non-viscous HJ, shown as \ref{implicit_graddesc1}. Note how it differs from the gradient descent update, shown in \ref{graddesc}
+
+\begin{equation}
+    x_{k+1} = x_k - \eta \nabla f(x_{k+1}) \label{implicit_graddesc1}
+\end{equation}
+\begin{equation}
+    x_{k+1} = x_k - \eta \nabla f(x_k)  \label{graddesc}
+\end{equation}
+\subsection{Derivation via Homogenization}
+Homogenization is a technique highly used in dynamical systems that have multiple time scalesm, and it couples a few fast variables with other variables that evolve very slowly. Therefore, in the limit that the time scales separate, this allows one to compute averages over the very fast variables, which then allows us to obtain averaged equations for the slow variables. Elastic-SGD is an algorithm by \cite{elasticSGD} in order to minimize communication overhead between a set of workers that optimize replicated copies of the original function in distributed training of neural networks. Homogenization is then used to show that Elastic-SGDs are in fact minimzing the local entropy under ergodic conditions. Consider the following stochastic differential equations (SDEs)
+
+\begin{align}
+    dx(s) &= h(x,y) ds \nonumber \\
+    dy(s) &= \frac{1}{\epsilon} g(x,y) ds + \frac{1}{\sqrt{\epsilon}} dW(s) \label{eq::SDEeqns}
+\end{align}
+
+where $h,g$ are sufficiently smooth functions, $W(s)$ represents the Wiener process, and the parameter $\epsilon > 0 $ is the homogenization parameter. Therefore, in the limit of $\epsilon \rightarrow 0$, if the unique invariant measure $\rho^\infty(y;x)$ exists and it is ergodit, then the dynamics of $x(s)$ converge to
+\begin{equation*}
+\begin{dcases}
+    dX(s) = \bar{h}(X) ds \\
+    \bar{h}(X) = \int h(X,y) \rho^\infty (dy; X)
+\end{dcases}
+\end{equation*}
+
+where $\bar{h}(X)$ represents the homogenized vector field for $X$. The gradient of the local entropy has already been defined as
+
+$$\nabla f_\gamma (x) = \gamma^{-1} \int_{\mathbb{R}^N} (x-y) \rho_1^\infty (dy;x)$$
+Therefore we can say that
+\begin{align*}
+    h(x,y) &= -\gamma^{-1} (x-y) \\
+    g(x,y) &= \nabla f(y) + \frac{1}{\gamma} (y-x)
+\end{align*}
+
+Then \ref{eq::SDEeqns} becomes
+\begin{align}
+    dx(s) &=  -\gamma^{-1} (x-y) ds \nonumber \nonumber \\
+    dy(s) &= -\frac{1}{\epsilon} \left[ \nabla f(y) + \frac{1}{\gamma} (y-x)\right] ds + \frac{1}{\sqrt{\epsilon}} dW(s) \label{EntropySGD}
+\end{align}
+
+While a standard neural network optimizes the optimization problem
+
+$$ x^* = \arg \min_x f(x)$$
+
+an Elastic-SGD solves
+$$\arg \min_{x^1,\cdot,x^n } \sum_{i=1}^n f(x^i) + \frac{1}{2\gamma} |x^i - x | 2 $$
+
+Therefore, this yields
+\begin{align}
+    dx(s) &=  -\gamma^{-1} \sum_{i=1}^n (x-x^i) ds \nonumber \\
+    dx^i(s) &= - \frac{1}{\epsilon} \left[ \nabla f(x^i) + \frac{1}{\gamma} ((x^i-x)\right] ds + \frac{1}{\sqrt{\epsilon}} dW^i (s)
+\end{align}
+
+The homogenized vector field can the be given by
+
+\begin{align*}
+    \bar{h}(X) &= \gamma^{-1} \int (x^1 - X) \rho^\infty(dx^1; X)
+\end{align*}
+
+Where all of these formulations match exactly the homogenized dynamics of Entropy-SGD. When comparing the heat equation to the viscous Hamilton-Jacobi equation, one may choose to study the equation below, as the convolution of hte exponentiated loss is quite complicated.
+
+$$f_\gamma(x) = G_\gamma * f(x) $$
+
+Since $\nabla f_\gamma ^2$ represents the averaging of the original gradient $\nabla f(x)$ over Gaussian pertubations of variance $\gamma$, the gradient descent dynamics of $f_\gamma^2$ may be written as
+\begin{align*}
+    dx(s) &= - \nabla f(x-y) ds \\
+    dy(s) &= - \frac{1}{\epsilon \gamma} y ds + \frac{1}{\sqrt{\epsilon}} dW(s)
+\end{align*}
+
+It is important to note that for the heat equation, $y(s)$ has no dependencies on $x(s)$, whereas Entropy-SGD in does have it, on the term $\nabla f(x-y)$. Although the heat equation smoothing is a lot more performed, the Entropy-SGD does have a much better empirical performance.
+
+\subsection{Stochastic Optimal Control Interpretation}
+The fact that the local entropy $f_\gamma(x)$ can be formulated as a viscous Hamilton-Jacopy eqation, and it is now possible to the gradient descent as an optimal control problem. Therefore, consider the following controlled SDE
+
+\begin{equation}
+dx(s) = - \nabla f(x) ds - \alpha(s) ds + dW(s) \tag{CSGD}
+\end{equation}
+where $t \leq s \leq T$, $x=x(t)$, and $\alpha(\cdot)$ is the control. With a terminal cost function $V(x(T)) : \mathbb{R}^N \rightarrow \mathbb{R}$, one can represent the prototypical quadratic running cost
+
+$$C(x,\alpha) = \mathbb{E} \left[ V(x(T)) + \frac{1}{2} \int_0^T |\alpha(s)|^2 ds \right]$$
+
+If one can then set the minimum expected cost over all controls and paths to be
+$$ u(x,t) = \min_{\alpha(\cdot)} C(x(\cdot),\alpha(\cdot))$$
+
+Then one can set $u(x,t)$ to be the unique viscosity solution of the Hamilton-Jacobi-Bellman PDE
+
+$$-\frac{\partial u}{\partial t} = -\nabla f(x) \cdot \nabla u(x,t) - \frac{1}{2} |\nabla u|^2 + \frac{1}{2} \Delta u$$
+
+with a terminal condition $u(x,T) = V(x)$. This specific case leads the optimal control to be the gradient of the solution $$\alpha^*(x,t) = \nabla u(x,t)$$
+
+Then, they finally show that, assuming $x_{csgd}(s)$ be the solution for the controlled stochastic gradient descent (CSGD) and $x_{sgd}(s)$ be the solution for the stochastic gradient descent (SGD), where they are shown below again for the convenience of the reader
+\begin{equation}
+    dx(t) = - \nabla f(x) dt - \alpha(t) dt + dW(t) \tag{CSGD}
+\end{equation}
+% \begin{equation}
+%     dx(t) = - \nabla f(x) dt - + dW(t) \tag(SGD)
+% \end{equation}
+
+They show that
+\begin{equation*}
+    \mathbb{E}[V(x_{csgd}(t))] \leq \mathbb{E}[V(x_{sgd}(t))] - \frac{1}{2} \mathbb{E} \left[ \int^t _0 |\alpha^*(x_{csgd},s)|^2 ds \right]
+\end{equation*}
+
+% \subsection{The local entropy is the solution of the viscous Hamilton-Jacobi PDE}
+% \subsection{The Elastic-SGD is equivalent to the local entropy under certain conditions}
+% \subsection{Applications for Non-convex Optimization}
+As results, the authors compare the four different algorithms to test their effectiveness. For each of them, $L$ represents the number of gradient evaluations performed prior to a weight update, and thus the number of epochs times $L$ is a measure of the wall-clock time, since a larger $L$ leads to a slower computation time.
+\begin{itemize}
+    \item Entropy-SGD ($L=20$)
+    \item Smoothing by the HEAT equation ($L=5$)
+    \item Non-viscous Hamilton-Jacobian Equation ($L=5$)
+    \item Stochastic Gradient Descent ($L=1$)
+\end{itemize}
+
+All of these experiments are then performed under three different networks with the used datasets in parenthesis
+\begin{itemize}
+    \item mnistfc (MNIST)
+    \item LeNet (MNIST)
+    \item All-CNN (CIFAR-10)
+\end{itemize}
+
+One very interesting thing about this paper was the introduction of understanding how to choose certain hyperparameters; most specifically $\gamma$. As we have seen before, $\gamma$ is a parameter for the Gaussian kernel, which is also used to represent time, and the higher the value, the better it is to smooth a function. By scoping through the loss function, they provide a decay rule so that it allows for a smooth loss function in the beginning to quickly progress down, and to then preserve the locations of the local minima in the end as $\gamma \rightarrow 0$, where $k/L$ is an integer, and $\gamma_0 \in [10^4, 10]$
+
+$$\gamma = \gamma_0 (1-10^{-3})^{k/L}$$
+
+Below are a table of the results, where it summarizes the minimum validation error (\%) @ effective epochs.
+
+\begin{center}
+    \begin{tabular}{c c c c c}
+        \hline
+        & \multicolumn{4}{c}{Item} \\
+        \cline{2-5}
+        Model & Entropy-SGD & HEAT & HJ & SGD \\
+        \hline
+        mnistfc & \textbf{1.08 $\pm$ 0.02 \% @ 120} & 1.13 $\pm$ 0.02 \%@ 200 & 1.17 $\pm$ 0.04 \%@ 200 & 1.10 $\pm$ 0.01\% @ 149 \\
+        LeNet & 0.5 $\pm$ 0.01\% @ 80 & 0.59 $\pm$ 0.02 \%@ 75 & \textbf{0.5 $\pm$ 0.01\% @ 70 } & 0.5 $\pm$ 0.02\% @ 67 \\
+        All-CNN & 7.96 $\pm$ 0.05\% @ 160 & 9.04 $\pm$ 0.04\% @ 150 & \textbf{7.89 $\pm$ 0.07\% @ 145 } & 7.94 $\pm$ 0.06\% @ 195
+    \end{tabular}
+\end{center}
+
+\begin{figure}[ht]
+\begin{center}
+    \includegraphics[width=0.3\textwidth]{"./images/deeprelax_mnistfc".png}
+    \includegraphics[width=0.3\textwidth]{"./images/deeprelax_lenet".png}
+    \includegraphics[width=0.3\textwidth]{"./images/deeprelax_allcnn_val".png}
+    \caption{The figure above portrays the different progressions of the four previously mentioned methods on the (left) mnistfc network, (center) the LeNet, and (right) All-CNN network, showing that the HJ methodology often times achieves lower losses at a faster rate than the currently used optimization methods in the community}
+    \label{fig::model_neuron}
+\end{center}
+\end{figure}
+
+As the table shows, the Hamilton-Jacobi implementation will often lead to a lower expected percent error at a lower epoch. This means that by solving a stochastic control problem to the viscous HJ PDE yields a smaller expected loss as compared to the stochastic gradient descent. This work also provides a better understanding to the choice of parameters. More specifically, $\gamma$ is equivalent to time for the gradient flow in the local entropy and Elastic-SGD.
+
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Characterization of Neural Networks as an Encoder-Decoder with Mutual Information \cite{blackbox}}
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Residual Networks as a Mean-Field Optimal Control Problem \cite{meanfield}}
 
 
+\subsection{Background}
+This paper was very interesting because it creates a optimal control formulation of a specific type of deep learning methodology. More specifically, it formulates a residual network as an optimal control problem. This is specifically because the feed forward propagation of a $T$-layer residual network is represented by
+
+\begin{equation} \label{eq::resnet_form}
+    x_{t+1} = x_t + f(x_t,\theta_t) \quad \quad \quad t \in \{0,\cdots,T-1\}
+\end{equation}
+
+where $x_0$ is the input to the network and $x_T$ is the final output, which is compared to a target $y_0$, which corresponds to $x_0$ via a loss function, and the goal is to train $\theta_0,\cdots,\theta_{T-1}$ such that $x_T$ is as close as possible to $y_0$. In this problem,$x_0 \in \mathbb{R}^d$ and $y_0 \in \mathbb{R}^l$ such that they are random variables jointly distributed according to the joint probability distribution $\mu_0 \mathbb{P}_{(x_0,y_0)}$. The set of admissible controls (i.e. training weights) is defined as $\Theta \subseteq \mathbb{R}^m$. The feed-forward dynamics $f$ maps $f:\mathbb{R}^d \times \Theta \rightarrow \mathbb{R}^d$, the terminal loss function $\Phi$ maps $\Phi : \mathbb{R}^d \times \mathbb{R}^{l} \rightarrow \mathbb{R}$, and the regularizer $L$ maps $L:\mathbb{R}^b \times \Theta \rightarrow \mathbb{R}$. The formulation for \ref{eq::resnet_form} is great, because, on can formulate a ordinary differential equation of it as
+
+\begin{equation} \label{eq::resnet_ode}
+    \dot{x}_t = f(x_t,\theta_t)
+\end{equation}
+
+Here, the bold-faced letters are used to describe a path-space quantity. For instance, $\bm{\theta} = \{ \theta_t | 0 \leq t \leq T \}$. Due to the equation \ref{eq::resnet_ode} being a fitting formulation for residual networks, a risk minimization problem in deep learning, it can then be formulated as a optimal control problem, either as a mean-field as well as an empirical
+\begin{equation*}
+\begin{dcases}
+\text{Mean-Field: } & \inf_{\bm{\theta} \in L^{\infty} ([0,T], \Theta)} J(\bm{\theta}) = \mathbb{E}_{\mu_0} \left[ \Phi (x_T,y_0) + \int_0^T L(x_t,\theta_t) dt \right]  \text{   Subject to } \dot{x}_t = f(x_t,\theta_t) \\
+\text{Empirical: }  & \inf_{\bm{\theta} \in L^{\infty} ([0,T], \Theta)} J_N(\bm{\theta}) = \frac{1}{N} \sum_{i=1}^N \left[ \Phi (x_T^i,y_0^i) + \int_0^T L(x_t^i,\theta_t) dt \right] \text{   Subject to } \dot{x}^i_t = f(x_t^i,\theta_t) \\
+\end{dcases}
+\end{equation*}
+
+From this point on, $w \in \mathbb{R}^{d+l}$ will denote the concatenated $(x,y)$, $\bar{f}(w,\theta)$ represents the extended ($d+l$)-dimensional feed-forward function, $\bar{L(w,\theta)}$ represents the extended ($d+l$)-regularization loss, and $\bar{\Phi}(w)$ represents the terminal loss function. The gradient operators are depicted as $\nabla$, the Fréchet derivative on Banach spaces are depicted as $D$, $a\cdot b$ denotes the inner product of two Euclidean vectors, the $\| \cdot \|$ denotes the Euclidean norm, and the $\| \cdot \|$ denotes the absolute value. A fixed and sufficiently rich probability space $(\Omega, \mathcal{F}, \mathbb{P})$ is represented as $\Omega$, and the set of square integrable probability measures on the Euclidean space $\mathbb{R}^{d+l}$ is shown as $\mathcal{P}_2(\mathbb{R}^{d+l})$, which is equipped with the 2-Wasserstein distance
+
+$$W_2(\mu,\nu) = \inf \left\{  \| X - Y \| _{L^2} | X,Y \in L^{2}(\Omega,\mathbb{R}^{d+l}) \text{ with } \mathbb{P}_X = \mu , \mathbb{P}_Y = \nu \right\}$$
+
+With a measurable function $\psi : \mathbb{R}^{d+l} \rightarrow \mathbb{R}^q$ that is square integrable with respect to $\mu$, define
+$$\langle \psi(\cdot) , \mu \rangle = \int_{\mathbb{R}^{d+l}} \psi(w) \mu(dw)$$
+
+Additionally, from this point on, the notation for the infimum will be shorthanded as
+$$ \inf_{\bm{\theta}} = \inf_{\bm{\theta} \in L^{\infty}([0,T],\Theta)}$$
+
+\subsection{Mean-Field Dynamic Programming and HJB Equation}
+In this section, the following assumptions are taken:
+\begin{itemize}
+    \item $f,L,\Phi$ are bounded, nad are Lipschitz continuous with respect to $x$, while the constants $f$ and $L$ are independent of $\theta $
+    \item $\mu_0 \in \mathcal{P}(\mathbb{R}^{d+l})$
+\end{itemize}
+
+By using the formulation previously specified, the Hamilton-Jacobi-Bellman equation (HJB), which is subject to \ref{eq::resnet_ode}, can be rewritten as follows
+
+\begin{align*}
+J(t,\mu,\bm{\theta}) &= \mathbb{E}_{(x_t,y_0)\sim \mu} \left[ \Phi(x_T,y_0) + \int_t^T L(x_t,\theta_t) dt \right] \\
+&= \langle \bar{\Phi}(\cdot),\mathbb{P}^{t,\mu,\bm{\theta}}_T \rangle + \int_t^T \langle \bar{L}(\cdot,\theta_s) , \mathbb{P}_s^{t,\mu,\bm{\theta}} \rangle ds
+\end{align*}
+
+With this, the value function $v^*(t,\mu)$ can be obtained with
+\begin{equation*}
+    v^*(t,\mu) = \inf_{\bm{\theta}} J(t,\mu,\bm{\theta}) \text{ where } J(\bm{\theta}) = v^*(0,\mu_0) \text{ by definition}
+\end{equation*}
+
+This value function is nice because it satisfies the dynamic programming principle, which states that for any optimal trajectory, if one start from any intermediate state in the trajectory, the remaining trajectory must be optimal. In other words
+
+\begin{equation*} \label{eq::dp_optimality}
+    v^*(t,\mu) = \inf_{\bm{\theta}} \left[ \int_t^{\hat{t}}  \langle \bar{L}(\cdot,\theta_s), \mathbb{P}_s^{t,\mu,\bm{\theta}} \rangle ds + v^* (\hat{t,\mathbb{P}_{\hat{t}}^{t,\mu,\bm{\theta}}}) \right]
+\end{equation*}
+
+Given such, the authors obtain a HJB in the Wasserstein Space by performing a formal Taylor Series expansion on the \ref{eq::dp_optimality}, yielding
+
+\begin{equation}
+    \begin{dcases}
+        \frac{\partial v}{\partial t} + \inf_\theta \langle \frac{\partial v(t,\mu) (\cdot)}{\partial \mu} \cdot \bar{f}(\cdot,\theta) + \bar{L}(\cdot,\theta) , \mu \rangle = 0 & \text{ on } [0,T] \times \mathcal{P}_2(\mathbb{R}^{d+l}) \\
+        v(T,\mu) = \langle \bar{\Phi}(\cdot),\mu \rangle & 0  \text{ on }  \mathcal{P}_2(\mathbb{R}^{d+l})
+    \end{dcases}
+    \tag{HJB}
+\end{equation}
+
+This then leads to the Proposition 3 in \cite{meanfield} that if $v$ is solution to (HJB) and there exists a $\theta'(t,\mu)$ that attains the infimum of (HJB), then $v=v^*$ and $\theta'$ is the optimal feedback control policy. This links the smooth solutions of HJB with the solutions of the mean-field optimal control problem, which means it also links to the population minimization problem in deep learning.
+
+\subsection{Viscosity Solutions of HJB}
+Many times, we cannot expect smooth solutions to the (HJB), and thus it's important to extend it to a weak solution by adding a viscosity to it in the Wasserstein space of the probability measures. By "lifting" the equations, it is possible to work in the Hilbert spaces instead of in the Wasserstein space. By defining Hamiltonian $\mathcal{H}$ as
+
+\begin{equation*}
+    \mathcal{H}(\xi, P) = \inf_\theta \mathbb{E} [P \cdot \bar{f}(\xi,\theta) + \bar{L}(\xi,\theta)]
+\end{equation*}
+
+The HJB can be set as
+
+\begin{align*}
+    \frac{\partial V}{\partial t} + \mathcal{H}(\xi,DV(t,\xi)) = 0 & \text{ on } [0,T] \times L^2(\Omega) \\
+    V(T,\xi) = \mathbb{E}[\bar{\Phi}(\xi)] & \text{ on } L^2(\Omega)
+\end{align*}
+
+Using the above, \cite{meanfield} show that the value function $v^*(t,\mu)$ is a viscosity solution of (HJB), showing that it exists and it is unique. Thus, the optimal control policy can be used to define an optimal control as the solution to the learning problem. This then provides an entry point to understanding DL as a variational problem, whose solution is characterized by the HJB.
+
+\subsection{Mean-Field Pontryagin's Maximum Principle}
+In classical optimal control, one is able to find the best possible local control from taking a dynamical system from a start state to a goal state via Pontryagin's maximum principle (PMP). However, in the mean-field formulation, a common control parameter is shared by all of the input-target pairs, which are taken from the same distribution $\mu_0$. Therefore, there must exist a maximum principle in an average sense. Below are the assumptions for this section
+
+\begin{itemize}
+    \item The function $f$ is bounded, $f,L$ are continuous in $\theta$, and $f,L,\Phi$ are continuously differentiable with respect to $x$
+    \item The distribution $\mu_0$ has a bounded support in $\mathbb{R}^d  \times \mathbb{R}^l$.
+\end{itemize}
+
+The Mean-Field PMP can be as, assuming that $\bm{\theta}^*$ be a solution of the mean-field formulation of the HJB such that $J(\bm{\theta}^*)$
+
+\begin{align*}
+    &\dot{x}_t^* = f(x_t^*, \theta_t^*) \text{ s.t. } x_t^* = x_0\\
+    &\dot{p}_t^* = - \nabla_x H(x_t^*,p_t^*,\theta_t^*) \text{ s.t. } p_T^* = - \nabla_x \Phi(x_T^*, y_0) \\
+    &\mathbb{E}_{\mu_0} [H(x_t^*,p_t^*,\theta_t^*)] \geq \mathbb{E}_{\mu_0} [H(x_t^*,p_t^*,\theta) ] \\
+    &H(x,p,\theta) = p \cdot f(x,\theta) - L(x,\theta) = \text{ Hamiltonian function } H : \mathbb{R}^d \times \mathbb{R}^d \times \Theta \rightarrow \mathbb{R}
+\end{align*}
+
+The last equation is important because it is an unique feature for the PMP-type sttatements, where it makes optimal solutiosn globally maximize the Hamiltonian function. This is advantageous as it can deal with the case where the dynamics are not differentiable with respect to the controls (i.e. training weights), or when the optimal controls lie on the boundary of the set $\Theta$.
+
+The authors further show that the PMP solutions can be derived from the HJB equation using the method of characteristics, where the derived Hamilton's equations \ref{eq::hamiltoneqns} are the characteristic equations of the HJB equation, thus the PMP pinpoints the necessary conditiona characteristic of HJB equation that originates from $\mu_0$ must satisfy.
+
+\begin{align} \label{eq::hamiltoneqns}
+    \dot{x}_t = f(\xi_t,\theta^*) \\
+    \dot{p}_t = -\nabla_x f(x_t,\theta_t^*) p_t - \nabla_x L (x_t,\theta_t^*)
+\end{align}
+
+The authors conlude the paper proving that when a mean-field PMP is stable $\bm{\theta}^*$, then the sampled PMP $\bm{\theta}^N$ will have its solutions be near a stable solution from the mean-field PMP with probability
+
+$$\mathbb{P}[|J(\bm{\theta}^N) - J(\bm{\theta}^*) \geq s] \leq 4 \exp\left( - \frac{Ns^2}{K_1 + K_2 s}\right)$$
+
+
+Although this paper relied heavily on proofs, this paper presents a very important formulation for ResNets, establishing solid and proofed entrypoints to the understanding of the mathematical theory behind ResNets.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Future}
+% \section{Future}
