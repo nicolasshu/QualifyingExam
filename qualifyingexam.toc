@@ -1,5 +1,5 @@
 \babel@toc {english}{}
-\contentsline {section}{\numberline {0.1}Key Papers}{3}{section.0.1}
+\contentsline {section}{\numberline {0.1}Key Papers for the Report}{3}{section.0.1}
 \contentsline {chapter}{\numberline {1}Speech Recognition in a Medical Environment}{4}{chapter.1}
 \contentsline {section}{\numberline {1.1}Background}{4}{section.1.1}
 \contentsline {section}{\numberline {1.2}Preliminary Data}{5}{section.1.2}
@@ -17,37 +17,37 @@
 \contentsline {subsubsection}{Ambiguities}{10}{section*.4}
 \contentsline {subsection}{\numberline {1.5.2}Non-Negative Matrix Factorization (NMF) and Sparse NMF (SNMF)}{10}{subsection.1.5.2}
 \contentsline {subsubsection}{Background}{10}{section*.5}
-\contentsline {subsubsection}{Aproaches to Learn Dictionaries}{15}{section*.6}
-\contentsline {subsubsection}{NMF for Speech Enhancement}{15}{section*.7}
-\contentsline {section}{\numberline {1.6}Speech Recognition}{16}{section.1.6}
-\contentsline {subsection}{\numberline {1.6.1}Hidden-Markov Models and Gaussian Mixture Models}{16}{subsection.1.6.1}
-\contentsline {subsection}{\numberline {1.6.2}Deep Learning Architectures}{18}{subsection.1.6.2}
-\contentsline {section}{\numberline {1.7}Speaker Verification and Speaker Diarization}{18}{section.1.7}
-\contentsline {subsection}{\numberline {1.7.1}Gaussian Mixture Model-Universal Background Model and Supervectors}{19}{subsection.1.7.1}
-\contentsline {subsection}{\numberline {1.7.2}Eigenvoices and Eigenchannel}{21}{subsection.1.7.2}
-\contentsline {subsection}{\numberline {1.7.3}Joint Factor Analysis}{21}{subsection.1.7.3}
-\contentsline {subsubsection}{Training the $\bm {V}$ matrix}{22}{section*.9}
-\contentsline {subsubsection}{Training the $\bm {U}$ matrix}{23}{section*.10}
-\contentsline {subsubsection}{Training the $\bm {D}$ matrix}{23}{section*.11}
-\contentsline {subsection}{\numberline {1.7.4}$i$-vectors}{24}{subsection.1.7.4}
-\contentsline {chapter}{\numberline {2}Deep Learning Theory}{26}{chapter.2}
-\contentsline {section}{\numberline {2.1}The Stochastic Thermodynamics of Learning \cite {thermo}}{26}{section.2.1}
-\contentsline {subsection}{\numberline {2.1.1}Learning Efficiency}{27}{subsection.2.1.1}
-\contentsline {section}{\numberline {2.2}Deep Relaxation: PDEs for Optimizing Deep Neural Networks \cite {deeprelaxation}}{30}{section.2.2}
-\contentsline {subsection}{\numberline {2.2.1}PDE Interpretation of local entropy}{31}{subsection.2.2.1}
-\contentsline {subsection}{\numberline {2.2.2}Derivation via Homogenization}{33}{subsection.2.2.2}
-\contentsline {subsection}{\numberline {2.2.3}Stochastic Optimal Control Interpretation}{34}{subsection.2.2.3}
-\contentsline {section}{\numberline {2.3}Characterization of Neural Networks as an Encoder-Decoder with Mutual Information \cite {blackbox}}{36}{section.2.3}
-\contentsline {subsection}{\numberline {2.3.1}Background}{36}{subsection.2.3.1}
-\contentsline {subsection}{\numberline {2.3.2}The Information Plane}{36}{subsection.2.3.2}
-\contentsline {subsection}{\numberline {2.3.3}Numerical Experiments}{37}{subsection.2.3.3}
-\contentsline {section}{\numberline {2.4}Residual Networks as a Mean-Field Optimal Control Problem \cite {meanfield}}{38}{section.2.4}
-\contentsline {subsection}{\numberline {2.4.1}Background}{38}{subsection.2.4.1}
-\contentsline {subsection}{\numberline {2.4.2}Mean-Field Dynamic Programming and HJB Equation}{39}{subsection.2.4.2}
-\contentsline {subsection}{\numberline {2.4.3}Viscosity Solutions of HJB}{40}{subsection.2.4.3}
+\contentsline {subsubsection}{Aproaches to Learn Dictionaries}{13}{section*.6}
+\contentsline {subsubsection}{NMF for Speech Enhancement}{13}{section*.7}
+\contentsline {section}{\numberline {1.6}Speech Recognition}{14}{section.1.6}
+\contentsline {subsection}{\numberline {1.6.1}Hidden-Markov Models and Gaussian Mixture Models}{14}{subsection.1.6.1}
+\contentsline {subsection}{\numberline {1.6.2}Deep Learning Architectures}{15}{subsection.1.6.2}
+\contentsline {section}{\numberline {1.7}Speaker Verification and Speaker Diarization}{16}{section.1.7}
+\contentsline {subsection}{\numberline {1.7.1}Gaussian Mixture Model-Universal Background Model and Supervectors}{16}{subsection.1.7.1}
+\contentsline {subsection}{\numberline {1.7.2}Eigenvoices and Eigenchannel}{19}{subsection.1.7.2}
+\contentsline {subsection}{\numberline {1.7.3}Joint Factor Analysis}{19}{subsection.1.7.3}
+\contentsline {subsubsection}{Training the $\bm {V}$ matrix}{20}{section*.9}
+\contentsline {subsubsection}{Training the $\bm {U}$ matrix}{21}{section*.10}
+\contentsline {subsubsection}{Training the $\bm {D}$ matrix}{22}{section*.11}
+\contentsline {subsection}{\numberline {1.7.4}$i$-vectors}{23}{subsection.1.7.4}
+\contentsline {chapter}{\numberline {2}Deep Learning Theory}{24}{chapter.2}
+\contentsline {section}{\numberline {2.1}The Stochastic Thermodynamics of Learning \cite {thermo}}{24}{section.2.1}
+\contentsline {subsection}{\numberline {2.1.1}Learning Efficiency}{25}{subsection.2.1.1}
+\contentsline {section}{\numberline {2.2}Deep Relaxation: PDEs for Optimizing Deep Neural Networks \cite {deeprelaxation}}{28}{section.2.2}
+\contentsline {subsection}{\numberline {2.2.1}PDE Interpretation of local entropy}{29}{subsection.2.2.1}
+\contentsline {subsection}{\numberline {2.2.2}Derivation via Homogenization}{31}{subsection.2.2.2}
+\contentsline {subsection}{\numberline {2.2.3}Stochastic Optimal Control Interpretation}{32}{subsection.2.2.3}
+\contentsline {section}{\numberline {2.3}Characterization of Neural Networks as an Encoder-Decoder with Mutual Information \cite {blackbox}}{34}{section.2.3}
+\contentsline {subsection}{\numberline {2.3.1}Background}{34}{subsection.2.3.1}
+\contentsline {subsection}{\numberline {2.3.2}The Information Plane}{34}{subsection.2.3.2}
+\contentsline {subsection}{\numberline {2.3.3}Numerical Experiments}{35}{subsection.2.3.3}
+\contentsline {section}{\numberline {2.4}Residual Networks as a Mean-Field Optimal Control Problem \cite {meanfield}}{36}{section.2.4}
+\contentsline {subsection}{\numberline {2.4.1}Background}{36}{subsection.2.4.1}
+\contentsline {subsection}{\numberline {2.4.2}Mean-Field Dynamic Programming and HJB Equation}{38}{subsection.2.4.2}
+\contentsline {subsection}{\numberline {2.4.3}Viscosity Solutions of HJB}{39}{subsection.2.4.3}
 \contentsline {subsection}{\numberline {2.4.4}Mean-Field Pontryagin's Maximum Principle}{40}{subsection.2.4.4}
-\contentsline {chapter}{Appendices}{46}{section*.20}
-\contentsline {chapter}{\numberline {A}Methodologies}{47}{Appendix.a.A}
-\contentsline {section}{\numberline {A.1}Long Short-Term Memory and Gated Recurrent Unit}{47}{section.a.A.1}
-\contentsline {section}{\numberline {A.2}Spectral Clustering}{48}{section.a.A.2}
-\contentsline {chapter}{Bibliography}{49}{chapter*.21}
+\contentsline {chapter}{Appendices}{41}{section*.20}
+\contentsline {chapter}{\numberline {A}Methodologies}{42}{Appendix.a.A}
+\contentsline {section}{\numberline {A.1}Long Short-Term Memory and Gated Recurrent Unit}{42}{section.a.A.1}
+\contentsline {section}{\numberline {A.2}Spectral Clustering}{43}{section.a.A.2}
+\contentsline {chapter}{Bibliography}{44}{chapter*.21}

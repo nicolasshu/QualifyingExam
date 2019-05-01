@@ -95,6 +95,11 @@ Han, K.~J., Chandrashekaran, A., Kim, J., and Lane, I.~R. (2018).
 \newblock The {CAPIO} 2017 conversational speech recognition system.
 \newblock {\em CoRR}, abs/1801.00059.
 
+\bibitem[{Hansen} and {Hasan}, 2015]{tutorial}
+{Hansen}, J. H.~L. and {Hasan}, T. (2015).
+\newblock Speaker recognition by machines and humans: A tutorial review.
+\newblock {\em IEEE Signal Processing Magazine}, 32(6):74--99.
+
 \bibitem[Hochreiter and Schmidhuber, 1997]{lstm1}
 Hochreiter, S. and Schmidhuber, J. (1997).
 \newblock Long short-term memory.
