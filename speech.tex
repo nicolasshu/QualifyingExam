@@ -438,7 +438,7 @@ Then maximum a posteriori adaptation rule equations for the weight, mean and cov
 \begin{dcases}
     \alpha_g = \frac{BW^0_s(g)}{BW^0_s(g) + r} \\
     \hat{\pi}_g = \beta \left[\alpha_g \frac{BW^0_s(g)}{T} + (1-\alpha_g) \pi_g\right]  \\
-    \hat{\bm{\mu}}_g = \alpha_g \mathbb{E}_g [\bm{x}_n | X] + (1-\alpha_g) \bm{mu}_g \\
+    \hat{\bm{\mu}}_g = \alpha_g \mathbb{E}_g [\bm{x}_n | X] + (1-\alpha_g) \bm{\mu}_g \\
     \hat{\Sigma}_g = \alpha_g \mathbb{E}_g [\bm{x}_n \bm{x}_n^T | X ] + (1-\alpha_g)(\Sigma_g + \bm{\mu}_g  \bm{\mu}_g^T) - \hat{\mu}_g \hat{\mu}_g^T
 \end{dcases}
 \end{equation*}
